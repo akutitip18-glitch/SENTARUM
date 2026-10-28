@@ -187,10 +187,10 @@
 <aside class="sidebar" id="sidebar">
   <div class="brand"><div class="brandrow"><div class="brandmark">S</div><div class="brandname">SENTARUM<span>Sistem Elektronik Tata Usaha dan Rekam Urusan Majelis</span></div></div></div>
   <nav class="nav" id="nav"></nav>
-  <div class="sidefoot">SEKRETARIAT DPRD<br>KABUPATEN KAPUAS HULU<br><span class="version">STAGING · v0.26.2 (Data Server + Pratinjau Lokal)</span></div>
+  <div class="sidefoot">SEKRETARIAT DPRD<br>KABUPATEN KAPUAS HULU<br><span class="version">STAGING · v0.26.3 (Model B Server + Pratinjau Lokal)</span></div>
 </aside>
 <main class="main">
-<header class="topbar"><div style="display:flex;align-items:center;gap:12px;min-width:0"><button class="btn mobile-menu" onclick="toggleSidebar()" aria-label="Buka menu navigasi">☰</button><button type="button" class="btn sentarum-back-btn" id="sentarumBackButton" onclick="sentarumGoBack0251()" aria-label="Kembali ke Dashboard" title="Kembali ke Dashboard" hidden><span aria-hidden="true" class="back-arrow">←</span><span class="back-text">Kembali</span><span class="back-destination" id="sentarumBackDestination"></span></button><div class="pageinfo"><h1 id="pageTitle">Ringkasan SENTARUM</h1><p id="pageSubtitle">Satu kali input, banyak keluaran — data terhubung dan dapat ditelusuri.</p></div></div><div class="topactions"><span class="chip"><span class="dot" id="storageDot"></span><span id="storageLabel">Tersimpan lokal</span></span><button class="btn" onclick="undoAction()" id="undoBtn" title="Undo perubahan terakhir">↶ Undo</button><button class="btn" onclick="redoAction()" id="redoBtn" title="Redo perubahan">↷ Redo</button><button class="btn s12-open" type="button" id="s12OpenBtn" onclick="window.s12Open()">☁ Renstra Supabase</button><button class="btn s12-open" type="button" id="s13OpenBtn" onclick="window.s13Open()">☁ Data Server</button><button class="btn primary" onclick="openQuickAdd()">＋ Input Data Lokal</button></div></header>
+<header class="topbar"><div style="display:flex;align-items:center;gap:12px;min-width:0"><button class="btn mobile-menu" onclick="toggleSidebar()" aria-label="Buka menu navigasi">☰</button><button type="button" class="btn sentarum-back-btn" id="sentarumBackButton" onclick="sentarumGoBack0251()" aria-label="Kembali ke Dashboard" title="Kembali ke Dashboard" hidden><span aria-hidden="true" class="back-arrow">←</span><span class="back-text">Kembali</span><span class="back-destination" id="sentarumBackDestination"></span></button><div class="pageinfo"><h1 id="pageTitle">Ringkasan SENTARUM</h1><p id="pageSubtitle">Satu kali input, banyak keluaran — data terhubung dan dapat ditelusuri.</p></div></div><div class="topactions"><span class="chip"><span class="dot" id="storageDot"></span><span id="storageLabel">Tersimpan lokal</span></span><button class="btn" onclick="undoAction()" id="undoBtn" title="Undo perubahan terakhir">↶ Undo</button><button class="btn" onclick="redoAction()" id="redoBtn" title="Redo perubahan">↷ Redo</button><button class="btn s12-open" type="button" id="s12OpenBtn" onclick="window.s12Open()">☁ Renstra Supabase</button><button class="btn s12-open" type="button" id="s13OpenBtn" onclick="window.s13Open()">☁ Data Server</button><button class="btn s12-open" type="button" id="s14OpenBtn" onclick="window.s14Open()">☁ Perjalanan Server</button><button class="btn primary" onclick="openQuickAdd()">＋ Input Data Lokal</button></div></header>
 <div class="content" id="content"></div>
 </main>
 </div>
@@ -3905,6 +3905,127 @@ async function init(){if(!token()){window.s12Open?.();status('Masuk Admin melalu
 window.s13Open=async()=>{$('s13Layer').hidden=false;await init();};
 $('s13Close').onclick=()=>{$('s13Layer').hidden=true;};$('s13Layer').addEventListener('click',e=>{if(e.target===$('s13Layer'))$('s13Layer').hidden=true;});
 $('s13Module').onchange=()=>{chosen=null;loadList();};$('s13Refresh').onclick=()=>init();$('s13New').onclick=()=>{chosen=null;drawList();renderEditor();status('Draf baru. Lengkapi isian inti, lalu simpan ke server.');};
+})();
+</script>
+
+<style>
+#s14Layer[hidden]{display:none!important}#s14Layer{position:fixed;inset:0;z-index:200000;background:rgba(9,29,46,.68);padding:14px;overflow:auto;display:flex;align-items:flex-start;justify-content:center}
+#s14Box{width:min(1100px,100%);margin:20px auto;border-radius:18px;background:#fff;color:#17344a;box-shadow:0 12px 60px #001d363f;overflow:hidden;font:14px/1.55 system-ui,-apple-system,sans-serif}
+#s14Box *{box-sizing:border-box}#s14Box header{padding:17px 22px;background:#0f625f;color:white;display:flex;justify-content:space-between;align-items:center;gap:12px}
+#s14Box header h2{font:700 20px/1.25 system-ui;margin:0;color:white}#s14Close{border:1px solid #fff9;background:transparent;color:white;border-radius:8px;padding:9px 15px;font-weight:700;cursor:pointer}
+#s14Content{padding:20px}#s14Box .s14-help{background:#eef6f9;border-radius:10px;padding:11px 13px;color:#23445b;margin-bottom:15px}
+#s14Box .s14-alert{padding:12px;border-radius:10px;background:#eff6fb;margin-bottom:12px;font-weight:600;color:#164862}#s14Box .s14-alert.good{background:#e7f6ed;color:#08603d}#s14Box .s14-alert.bad{background:#fff0eb;color:#9e3429}
+#s14Box button{cursor:pointer;border-radius:9px;padding:10px 13px;font:600 13px system-ui;white-space:normal}#s14Box .s14-primary{background:#0d786b;color:white;border:1px solid #0d786b}#s14Box .s14-secondary{background:white;color:#115e5b;border:1px solid #91c2be}
+#s14Box label{display:block;font-weight:650;margin-bottom:5px;color:#233d52}#s14Box input,#s14Box select,#s14Box textarea{width:100%;min-width:0;max-width:100%;border:1px solid #bfd0dc;background:white;color:#203547;border-radius:9px;font:14px/1.4 system-ui;padding:10px}
+#s14Box input:focus,#s14Box select:focus,#s14Box textarea:focus{outline:2px solid #57b7a4;outline-offset:0}
+#s14Box .s14-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}#s14Box .s14-grid>div{min-width:0}
+#s14Box .s14-section{border:1px solid #d4e3eb;border-radius:13px;margin-top:13px;padding:14px}#s14Box .s14-section h3{margin:0 0 10px;font-size:16px;color:#1b3f55}
+#s14Box .s14-buttons{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}#s14Box .s14-card{display:block;width:100%;background:white;text-align:left;border:1px solid #d4e3ea;padding:11px;margin:6px 0;color:#234}
+#s14Box .s14-card.active{background:#e8faf3;border-color:#0d8e79}#s14Box .s14-card small{display:block;color:#697e8c}#s14Box .s14-cols{display:grid;grid-template-columns:minmax(220px,330px) minmax(0,1fr);gap:16px}
+#s14Box .s14-small{font-size:12px;color:#587286}#s14Box .s14-pill{display:inline-block;background:#ecf4f9;color:#2a5771;border-radius:16px;padding:3px 9px;margin:2px 3px 2px 0;font-size:12px}
+#s14Box button:disabled{opacity:.55;cursor:not-allowed}
+@media(max-width:740px){#s14Layer{padding:0}#s14Box{margin:0;border-radius:0;min-height:100vh}#s14Content{padding:13px}#s14Box .s14-grid,#s14Box .s14-cols{grid-template-columns:1fr}#s14Box header{padding:13px}}
+</style>
+<div id="s14Layer" hidden role="dialog" aria-modal="true" aria-label="Perjalanan Dinas Model B Server">
+ <section id="s14Box"><header><div><h2>☁ Perjalanan Dinas · Model B Server</h2><div style="font-size:12px;opacity:.88">STAGING 014 · Register, Peserta, SPJ Individual, Evidence & Tindak Lanjut</div></div><button id="s14Close" type="button">Tutup</button></header>
+ <div id="s14Content">
+ <div class="s14-help"><strong>Data di panel ini disimpan ke Supabase Staging.</strong> Data Perjalanan/SPJ pada formulir lama masih lokal dan tidak dipindahkan otomatis. SPJ <strong>dibuat per peserta</strong>, termasuk perjalanan rombongan. Nilai adalah <strong>nilai diajukan</strong>, bukan pembayaran atau realisasi resmi. Dokumen hanya ditautkan; unggah berkas privat belum diaktifkan.</div>
+ <div class="s14-alert" id="s14Status" aria-live="polite">Login Admin melalui ☁ Renstra Supabase dahulu.</div>
+ <div class="s14-cols"><aside class="s14-section" style="margin-top:0"><h3>Register perjalanan</h3><div class="s14-buttons" style="margin:0 0 10px"><button type="button" class="s14-secondary" id="s14Refresh">↻ Muat dari server</button><button type="button" class="s14-primary" id="s14New">+ Perjalanan baru</button></div><div id="s14Trips"></div></aside>
+ <div><section class="s14-section" style="margin-top:0"><h3>Registrasi singkat</h3><div class="s14-grid">
+ <div><label for="s14Agenda">Agenda aktif (data server)</label><select id="s14Agenda"></select><small class="s14-small">Buat dan aktifkan Agenda terlebih dahulu melalui ☁ Data Server jika belum tersedia.</small></div>
+ <div><label for="s14Kind">Bentuk perjalanan</label><select id="s14Kind"><option>Individual</option><option>Rombongan</option></select></div>
+ <div style="grid-column:1/-1"><label for="s14Purpose">Maksud / tujuan</label><input id="s14Purpose" maxlength="500" placeholder="Tulis tujuan singkat perjalanan"></div>
+ <div><label for="s14Start">Tanggal mulai</label><input id="s14Start" type="date"></div><div><label for="s14End">Tanggal akhir</label><input id="s14End" type="date"></div>
+ </div><div class="s14-buttons"><button type="button" class="s14-primary" id="s14SaveTrip">Simpan draf perjalanan</button><span class="s14-small" id="s14TripState"></span></div></section>
+ <section class="s14-section"><h3>Peserta</h3><div id="s14Participants" class="s14-small">Pilih atau buat perjalanan dulu.</div><div class="s14-grid"><div><label for="s14Person">Pilih pegawai / anggota (bila sudah ada)</label><select id="s14Person"></select></div><div><label for="s14ManualName">Atau nama peserta baru</label><input id="s14ManualName" placeholder="Hanya bila belum tersedia di master"></div></div><div class="s14-buttons"><button id="s14AddParticipant" class="s14-secondary" type="button">+ Tambah peserta</button></div></section>
+ <section class="s14-section"><h3>SPJ per peserta (individual)</h3>
+ <div class="s14-help">Cukup pilih peserta sekali saat membuat SPJ. Satu peserta memiliki satu register SPJ untuk setiap perjalanan; rincian biaya serta dokumen dapat ditambahkan bertahap. Bukti rombongan tetap dapat ditautkan pada tingkat register.</div>
+ <div id="s14SpjList" class="s14-small">Belum ada SPJ peserta.</div>
+ <div class="s14-grid"><div><label for="s14SpjParticipant">Peserta pemilik SPJ</label><select id="s14SpjParticipant"></select></div><div><label for="s14SpjRef">Nomor SPJ (jika sudah ada)</label><input id="s14SpjRef" maxlength="150" placeholder="Opsional saat draf"></div></div>
+ <div class="s14-buttons"><button id="s14AddSpj" type="button" class="s14-secondary">+ Buat SPJ peserta</button></div>
+ <div style="margin-top:12px"><label for="s14PickSpj">SPJ peserta untuk rincian biaya</label><select id="s14PickSpj"></select><small id="s14CostOwner" class="s14-small">Peserta diambil otomatis dari SPJ terpilih.</small></div>
+ <div class="s14-grid" style="margin-top:12px"><div><label for="s14CostCategory">Jenis biaya</label><select id="s14CostCategory"><option>Transport</option><option>Uang harian</option><option>Penginapan</option><option>Transport lokal</option><option>Lainnya</option></select></div><div><label for="s14CostAmount">Nilai diajukan (Rp)</label><input id="s14CostAmount" type="number" step="1" min="0" placeholder="0"></div><div style="grid-column:1/-1"><label for="s14CostDesc">Uraian rincian biaya</label><input id="s14CostDesc" maxlength="500" placeholder="Keterangan sesuai bukti peserta"></div></div>
+ <div class="s14-buttons"><button id="s14AddCost" type="button" class="s14-secondary">+ Tambah biaya peserta</button></div><div id="s14Costs" class="s14-small"></div>
+ </section>
+ <section class="s14-section"><h3>Evidence dan tindak lanjut</h3><div class="s14-grid"><div><label for="s14Doc">Dokumen yang sudah terdaftar</label><select id="s14Doc"></select></div><div><label for="s14EvKind">Jenis bukti</label><input id="s14EvKind" placeholder="Misalnya: Laporan hasil"></div><div><label for="s14EvScope">Cakupan bukti</label><select id="s14EvScope"><option>Register</option><option>Peserta</option><option>SPJ</option></select></div><div><label for="s14EvTarget">Pilih peserta / SPJ (jika diperlukan)</label><select id="s14EvTarget"></select></div></div>
+ <div class="s14-buttons"><button id="s14AddEvidence" type="button" class="s14-secondary">+ Tautkan evidence</button></div><div id="s14Evidence" class="s14-small"></div>
+ <div class="s14-grid" style="margin-top:12px"><div style="grid-column:1/-1"><label for="s14FollowTitle">Tindak lanjut</label><input id="s14FollowTitle" placeholder="Pekerjaan yang harus ditindaklanjuti"></div><div><label for="s14FollowAssignee">Penanggung jawab</label><input id="s14FollowAssignee" placeholder="Nama / unit"></div><div><label for="s14FollowDue">Tenggat</label><input id="s14FollowDue" type="date"></div></div>
+ <div class="s14-buttons"><button id="s14AddFollow" type="button" class="s14-secondary">+ Catat tindak lanjut</button></div><div id="s14Followups" class="s14-small"></div>
+ </section></div></div></div></section>
+</div>
+<script>
+(()=>{'use strict';
+const ROOT='https://twwadofupxcupmjzdbgj.supabase.co', KEY='sb_publishable_9jlv_4EBKclG0evCSbWl8A_qPo1Trdw';
+const $=id=>document.getElementById(id),V=id=>$(id)?.value||'';
+let org=null,trips=[],active=null,revision=null,agendas=[],people=[],docs=[],parts=[],spjs=[],costs=[],evs=[],follows=[],busy=false;
+const token=()=>window.__SENTARUM_STAGE12_AUTH__?.token?.()||'';
+function status(message,type=''){const el=$('s14Status');el.textContent=message;el.className='s14-alert '+type;}
+function el(tag,contents,css){const x=document.createElement(tag);if(css)x.className=css;if(contents!=null)x.textContent=String(contents);return x;}
+function option(select,id,label){const o=document.createElement('option');o.value=id;o.textContent=label;select.appendChild(o);}
+function options(id,data,emptyText,display){const sel=$(id),was=sel.value;sel.replaceChildren();option(sel,'',emptyText);for(const x of data)option(sel,x.id,display(x));if(data.some(x=>x.id===was))sel.value=was;}
+function boolTrip(){if(!active){status('Pilih atau buat perjalanan dahulu.','bad');return false;}return true;}
+async function api(path,opts={}){if(!token())throw Error('Silakan login melalui ☁ Renstra Supabase.');const ac=new AbortController(),tm=setTimeout(()=>ac.abort(),26000);
+ try{const response=await fetch(ROOT+path,{...opts,headers:{apikey:KEY,Authorization:'Bearer '+token(),Accept:'application/json',...(opts.headers||{})},credentials:'omit',cache:'no-store',signal:ac.signal});const txt=await response.text();let out;try{out=txt?JSON.parse(txt):null}catch{out=txt}if(!response.ok)throw Error('HTTP '+response.status+' — '+String(out?.message||out?.error||txt).slice(0,230));return out;}finally{clearTimeout(tm);}}
+async function cmd(name,data){if(busy)return;busy=true;try{status('Menyimpan '+name+'…');const r=await api('/rest/v1/rpc/sentarum_modelb_command',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({p_command:name,p_org_id:org.id,p_data:data})});status('Tersimpan di Supabase Staging: '+name,'good');return r;}catch(e){status('Gagal: '+String(e.message).slice(0,260),'bad');return null;}finally{busy=false;}}
+function drawTrips(){const host=$('s14Trips');host.replaceChildren();if(!trips.length)host.append(el('p','Belum ada register Model B di server.','s14-small'));
+ for(const t of trips){const b=el('button',t.purpose||'(tanpa tujuan)','s14-card'+(active?.id===t.id?' active':''));b.append(el('small',`${t.kind} · ${t.planned_start||''}—${t.planned_end||''} · ${t.status}`));b.onclick=()=>selectTrip(t.id);host.append(b);}}
+function formatRp(x){return 'Rp '+Number(x||0).toLocaleString('id-ID',{maximumFractionDigits:0});}
+function participantName(id){const p=parts.find(x=>x.id===id);return p?(p.legacy_manual_name||people.find(x=>x.id===p.person_record_id)?.display_title||p.id.slice(0,8)):'(peserta tidak ditemukan)';}
+function drawChildren(){
+ $('s14Participants').replaceChildren(...(parts.length?parts.map(x=>el('span',(x.legacy_manual_name||people.find(p=>p.id===x.person_record_id)?.display_title||'Peserta')+' · '+x.status,'s14-pill')):[el('span','Belum ada peserta','s14-small')]));
+ const belum=parts.filter(x=>!spjs.some(s=>s.participant_id===x.id)&&x.status!=='Dibatalkan');
+ options('s14SpjParticipant',belum,'— Pilih peserta tanpa SPJ —',x=>participantName(x.id));
+ options('s14PickSpj',spjs,'— Pilih SPJ individu —',s=>`${participantName(s.participant_id)} · ${s.reference_number||'Belum bernomor'} · ${s.reconciliation_state}`);
+ $('s14SpjList').replaceChildren(...(spjs.length?spjs.map(x=>el('span',`${participantName(x.participant_id)} · ${x.reference_number||'Belum bernomor'}`,'s14-pill')):[el('span','Belum ada SPJ individu','s14-small')]));
+ const total=costs.reduce((a,x)=>a+Number(x.submitted_rp||0),0);
+ const summaries=spjs.map(spj=>`${participantName(spj.participant_id)}: ${formatRp(costs.filter(c=>c.spj_id===spj.id).reduce((a,x)=>a+Number(x.submitted_rp||0),0))}`);
+ $('s14Costs').textContent=costs.length?`${costs.length} rincian diajukan, total seluruh SPJ individu ${formatRp(total)}. ${summaries.join(' · ')}. Belum berarti diakui/dibayar.`:'Belum ada rincian biaya peserta.';
+ $('s14Evidence').textContent=evs.length?`${evs.length} tautan bukti tercatat; belum otomatis terverifikasi.`:'Belum ada tautan evidence.';
+ $('s14Followups').textContent=follows.length?`${follows.length} tindak lanjut tercatat; status perlu diperbarui sesuai pekerjaan sebenarnya.`:'Belum ada tindak lanjut.';
+ updateCostOwner();updateEvTarget();
+}
+function updateCostOwner(){const spj=spjs.find(x=>x.id===V('s14PickSpj'));$('s14CostOwner').textContent=spj?'Biaya otomatis dicatat atas nama: '+participantName(spj.participant_id):'Pilih SPJ. Sistem akan mengisi identitas peserta secara otomatis.';}
+function updateEvTarget(){const scope=V('s14EvScope');const target=scope==='Peserta'?parts:scope==='SPJ'?spjs:[];
+ options('s14EvTarget',target,scope==='Register'?'— Tidak perlu pilih —':'— Pilih '+scope+' —',x=>scope==='Peserta'?(x.legacy_manual_name||people.find(p=>p.id===x.person_record_id)?.display_title||x.id.slice(0,8)):(participantName(x.participant_id)+' · '+(x.reference_number||'SPJ individu')));}
+async function loadChildren(){if(!active){parts=[];spjs=[];costs=[];evs=[];follows=[];drawChildren();return;}
+ const filter='&org_id=eq.'+encodeURIComponent(org.id)+'&travel_id=eq.'+encodeURIComponent(active.id)+'&limit=250';
+ const requests=[
+ '/rest/v1/travel_participants?select=id,person_record_id,legacy_manual_name,status'+filter,
+ '/rest/v1/spj_packages?select=id,participant_id,kind,status,reference_number,reconciliation_state'+filter,
+ '/rest/v1/spj_cost_lines?select=id,spj_id,scope,category,submitted_rp,participant_id'+filter,
+ '/rest/v1/travel_evidence_links?select=id,evidence_kind,scope,verification_state'+filter,
+ '/rest/v1/travel_followups?select=id,title,state,due_on'+filter];
+ [parts,spjs,costs,evs,follows]=await Promise.all(requests.map(p=>api(p)));drawChildren();}
+async function selectTrip(id){const t=trips.find(x=>x.id===id);if(!t)return;active=t;revision=t.revision||null;
+ $('s14Agenda').value=t.agenda_record_id||'';$('s14Kind').value=t.kind;$('s14Purpose').value=t.purpose||'';$('s14Start').value=t.planned_start||'';$('s14End').value=t.planned_end||'';
+ drawTrips();$('s14TripState').textContent='Draf server · Revisi '+(t.revision||'?')+' · ID '+t.id.slice(0,8);try{await loadChildren();status('Perjalanan dan data terkait dimuat dari server.','good');}catch(e){status('Gagal memuat detail: '+e.message,'bad');}}
+async function load(){try{status('Memuat data Model B dari Supabase…');const rows=await api('/rest/v1/organizations?select=id,code,name&code=eq.SETWAN_KAPUAS_HULU&limit=1');if(!Array.isArray(rows)||rows.length!==1)throw Error('Organisasi tidak ditemukan');org=rows[0];
+ const r='/rest/v1/business_records?select=id,module_key,display_title,state&org_id=eq.'+encodeURIComponent(org.id)+'&state=eq.active&limit=1000';
+ const [ref,trav,revs]=await Promise.all([api(r),api('/rest/v1/travel_registers?select=id,agenda_record_id,kind,purpose,planned_start,planned_end,status,org_id&org_id=eq.'+encodeURIComponent(org.id)+'&order=created_at.desc&limit=100'),api('/rest/v1/business_records?select=id,revision&org_id=eq.'+encodeURIComponent(org.id)+'&module_key=eq.perjadin&limit=200')]);
+ agendas=ref.filter(x=>x.module_key==='agenda');people=ref.filter(x=>['pegawai','anggota','tenaga_ahli'].includes(x.module_key));docs=ref.filter(x=>x.module_key==='dokumen');trips=trav.map(t=>({...t,revision:revs.find(x=>x.id===t.id)?.revision||null}));
+ options('s14Agenda',agendas,'— Pilih Agenda aktif —',x=>x.display_title);options('s14Person',people,'— Jika belum ada, isi nama manual —',x=>x.display_title);options('s14Doc',docs,'— Pilih dokumen terdaftar —',x=>x.display_title);
+ if(!trips.some(t=>t.id===active?.id))active=null;drawTrips();if(active)await selectTrip(active.id);else drawChildren();status(`Memuat ${trips.length} perjalanan dari Supabase. ${agendas.length} agenda aktif tersedia.`,'good');
+ }catch(e){status('Gagal memuat: '+e.message,'bad');}}
+function newTrip(){active=null;revision=null;parts=[];spjs=[];costs=[];evs=[];follows=[];['s14Agenda','s14Purpose','s14Start','s14End'].forEach(id=>$(id).value='');$('s14Kind').value='Individual';$('s14TripState').textContent='Belum disimpan';drawTrips();drawChildren();status('Isi agenda, tujuan, dan tanggal. Simpan sebagai draf.');}
+function dateOkay(){return V('s14Start')&&V('s14End')&&V('s14End')>=V('s14Start');}
+$('s14SaveTrip').onclick=async()=>{if(!org||!V('s14Agenda')||!V('s14Purpose').trim()||!dateOkay())return status('Pilih agenda aktif, isi tujuan dan rentang tanggal yang benar.','bad');
+ const action=active?'travel_update':'travel_create';
+ const r=await cmd(action,{id:active?.id||null,expected_revision:revision,agenda_record_id:V('s14Agenda'),kind:V('s14Kind'),purpose:V('s14Purpose'),planned_start:V('s14Start'),planned_end:V('s14End')});if(r){await load();await selectTrip(r.id);}};
+$('s14AddParticipant').onclick=async()=>{if(!boolTrip())return;const data={travel_id:active.id,person_record_id:V('s14Person')||null,manual_name:V('s14ManualName')||null};if(!data.person_record_id&&!data.manual_name)return status('Pilih peserta dari data induk atau isi nama.','bad');if(await cmd('participant_add',data)){$('s14ManualName').value='';await loadChildren();}};
+$('s14AddSpj').onclick=async()=>{if(!boolTrip())return;
+ const participant_id=V('s14SpjParticipant');if(!participant_id)return status('Pilih peserta yang belum memiliki SPJ pada perjalanan ini.','bad');
+ if(await cmd('spj_create',{travel_id:active.id,participant_id,reference_number:V('s14SpjRef')})){$('s14SpjRef').value='';await loadChildren();}};
+$('s14AddCost').onclick=async()=>{if(!boolTrip())return;
+ if(!V('s14PickSpj')||!V('s14CostDesc')||V('s14CostAmount')==='')return status('Pilih SPJ peserta, uraian, dan nominal biaya.','bad');
+ const data={spj_id:V('s14PickSpj'),category:V('s14CostCategory'),description:V('s14CostDesc'),submitted_rp:V('s14CostAmount')};
+ if(await cmd('cost_add',data)){$('s14CostDesc').value='';$('s14CostAmount').value='';await loadChildren();}};
+$('s14AddEvidence').onclick=async()=>{if(!boolTrip())return;if(!V('s14Doc')||!V('s14EvKind'))return status('Pilih dokumen sumber dan jenis bukti.','bad');const scope=V('s14EvScope');if(scope!=='Register'&&!V('s14EvTarget'))return status('Pilih '+scope+' terkait.','bad');
+ const data={travel_id:active.id,scope,document_record_id:V('s14Doc'),evidence_kind:V('s14EvKind'),participant_id:scope==='Peserta'?V('s14EvTarget'):null,spj_id:scope==='SPJ'?V('s14EvTarget'):null};if(await cmd('evidence_link',data))await loadChildren();};
+$('s14AddFollow').onclick=async()=>{if(!boolTrip())return;if(!V('s14FollowTitle'))return status('Isi uraian tindak lanjut.','bad');const data={travel_id:active.id,title:V('s14FollowTitle'),assignee:V('s14FollowAssignee')||null,due_on:V('s14FollowDue')||null};if(await cmd('followup_add',data)){$('s14FollowTitle').value='';await loadChildren();}};
+$('s14EvScope').onchange=updateEvTarget;$('s14PickSpj').onchange=updateCostOwner;$('s14Refresh').onclick=load;$('s14New').onclick=newTrip;
+$('s14Close').onclick=()=>{$('s14Layer').hidden=true;};$('s14Layer').addEventListener('click',e=>{if(e.target===$('s14Layer'))$('s14Layer').hidden=true;});
+window.s14Open=async()=>{$('s14Layer').hidden=false;if(!token()){window.s12Open?.();status('Login Admin melalui ☁ Renstra Supabase dahulu.');return;}await load();};
 })();
 </script>
 
