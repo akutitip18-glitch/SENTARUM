@@ -2,84 +2,74 @@
 <html lang="id">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://*.supabase.co; form-action 'none'; base-uri 'none'; img-src 'none'; object-src 'none'">
-<title>SENTARUM Staging — Login Admin & Uji Hak Akses</title>
-<meta name="robots" content="noindex, nofollow">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://twwadofupxcupmjzdbgj.supabase.co; form-action 'none'; object-src 'none'; base-uri 'none'; img-src 'none'">
+<title>SENTARUM Staging — Tahap 011 Uji Tulis Admin</title>
 <style>
-:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#16243b;background:#f6f9fc;font-synthesis:none}
-*{box-sizing:border-box}body{margin:0;padding:30px 16px 60px;line-height:1.55}.wrap{max-width:780px;margin:auto}
-header{background:#112642;color:#fff;border-radius:18px;padding:26px 30px;box-shadow:0 8px 28px #11264216}
-.fixed-project{background:#edf8f7;border:1px solid #b6ddda;padding:15px 18px;border-radius:12px;margin:12px 0 23px}.fixed-project strong{display:block;font-size:.97rem}.fixed-project .domain{font-size:.9rem;color:#066b65;overflow-wrap:anywhere}.fixed-project .small{font-size:.8rem;color:#5b726f;margin-top:5px}.preflight-tag{display:inline-flex;gap:7px;align-items:center;background:#eff9f5;color:#096b53;padding:5px 11px;border-radius:999px;font-weight:750;font-size:.74rem;margin:0 0 12px}header .eyebrow{font-weight:700;letter-spacing:.13em;color:#8cdaca;font-size:.73rem}h1{font-size:clamp(1.5rem,3.4vw,2.2rem);line-height:1.22;margin:8px 0 10px}header p{color:#d7e3f4;margin:0;max-width:600px}
-main{background:white;border:1px solid #dbe5ef;border-radius:18px;padding:26px 30px;margin-top:20px;box-shadow:0 6px 20px #1126420a}
-h2{font-size:1.16rem;margin:0 0 12px}.intro{font-size:.91rem;color:#536478;margin:0 0 19px}.field{margin:0 0 15px}label{display:block;font-size:.9rem;font-weight:650;margin-bottom:6px}input{width:100%;border:1px solid #afc1d5;border-radius:10px;font:inherit;padding:11px 12px;background:#fff;color:#18253b}input:focus{outline:3px solid #bceae0;border-color:#087d70}.hint{color:#66758a;font-size:.82rem;margin:5px 0 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}button{cursor:pointer;font:inherit;font-weight:700;border-radius:10px;padding:11px 17px;border:1px solid #067d76;background:#067d76;color:white}button.secondary{color:#174c54;border-color:#a9c7ca;background:#f6ffff}button:disabled{opacity:.55;cursor:not-allowed}button:hover:not(:disabled){filter:brightness(.96)}
-.note{padding:12px 15px;border-radius:10px;background:#f0f8f7;border-left:4px solid #087d70;color:#305450;font-size:.91rem;margin:16px 0}.warning{background:#fff9ed;border-color:#cb8b16;color:#71501d}.status{margin-top:23px}.hide{display:none}.result{display:flex;gap:13px;align-items:flex-start;border:1px solid #e0e8f0;border-radius:11px;padding:12px 14px;margin:10px 0}.dot{width:24px;height:24px;line-height:24px;flex:0 0 24px;border-radius:50%;text-align:center;font-size:.84rem;font-weight:800;background:#edf3f8;color:#586777}.result.good .dot{background:#def7e9;color:#11633f}.result.bad .dot{background:#ffe2e2;color:#a52424}.result .small{font-size:.82rem;color:#66758a;overflow-wrap:anywhere}.result strong{font-size:.91rem}.summary{white-space:pre-wrap;font-size:.83rem;background:#f5f7fa;border:1px solid #dee7ef;border-radius:11px;padding:14px;color:#24384f;min-height:80px}.meta{font-size:.82rem;color:#697a8e;margin-top:10px}footer{margin-top:15px;color:#64748b;text-align:center;font-size:.81rem}@media(max-width:600px){body{padding:12px 10px 30px}header,main{padding:20px 16px}.grid{grid-template-columns:1fr}}
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;background:#f2f6fa;color:#172b43;font-synthesis:none}*{box-sizing:border-box}body{margin:0;padding:28px 15px 60px;line-height:1.5}.wrap{max-width:780px;margin:auto}
+header{background:#112844;color:white;border-radius:18px;padding:28px;box-shadow:0 10px 26px #11284418}header small{color:#8fdbcc;font-size:.77rem;letter-spacing:.12em;font-weight:800}h1{font-size:clamp(1.45rem,3.5vw,2.15rem);line-height:1.2;margin:8px 0 12px}header p{color:#d6e8f6;max-width:620px;margin:0}.panel{background:white;border:1px solid #dbe5ef;border-radius:18px;padding:25px 28px;margin-top:18px;box-shadow:0 8px 24px #1128440a}.eyebrow{font-weight:800;font-size:.75rem;color:#0d7367;letter-spacing:.045em}.project{border-radius:12px;background:#edf8f6;border:1px solid #b7dcd5;padding:14px 17px;margin:14px 0 24px}.project p{margin:2px 0;font-size:.83rem;color:#47666a;overflow-wrap:anywhere}.project strong{display:block}h2{font-size:1.13rem;margin:0 0 13px}.row{display:grid;grid-template-columns:1fr 1fr;gap:14px}label{display:block;font-size:.88rem;font-weight:700;margin-bottom:7px}input{width:100%;border:1px solid #b6c6d6;border-radius:10px;padding:12px;background:#fff;font:inherit;color:#203248}input:focus{outline:3px solid #cdf0e7;border-color:#007e71}button{cursor:pointer;border:1px solid #077d71;border-radius:10px;padding:12px 18px;background:#087f73;color:white;font:inherit;font-weight:750}button:disabled{opacity:.6;cursor:not-allowed}.secondary{background:white;color:#17635d;border-color:#9dc9bd}.buttons{display:flex;gap:10px;flex-wrap:wrap;margin-top:18px}.note{font-size:.87rem;background:#effaf6;border-left:4px solid #087f73;padding:13px 16px;color:#235f52;border-radius:9px;margin:17px 0}.warn{background:#fff8eb;border-color:#d49b33;color:#79591f}.status{display:none;margin-top:20px}.status.show{display:block}.result{display:flex;gap:12px;padding:11px 13px;border:1px solid #dfe8f0;border-radius:10px;margin-bottom:9px}.symbol{flex:0 0 26px;width:26px;height:26px;border-radius:50%;text-align:center;line-height:26px;background:#dce8f2;font-weight:800}.result.good .symbol{background:#d8f4e7;color:#14623a}.result.bad .symbol{background:#ffe1dc;color:#a52525}.result strong{display:block;font-size:.9rem}.result span.detail{font-size:.81rem;color:#637589}.copybox{white-space:pre-wrap;overflow-wrap:anywhere;background:#f5f7fa;border:1px solid #e3e9f0;border-radius:10px;padding:12px;min-height:60px;font-size:.82rem}footer{text-align:center;color:#647990;font-size:.78rem;padding-top:20px}@media(max-width:550px){body{padding:12px 9px 30px}header,.panel{padding:20px 16px}.row{grid-template-columns:1fr}}
 </style>
-</head>
-<body>
-<div class="wrap">
-<header><div class="eyebrow">SENTARUM · SUPABASE STAGING</div><h1>Masuk sebagai Administrator</h1><p>Tahap 010 — Pengujian login dan izin baca Renstra langsung dari Supabase. <strong>Mode baca-saja; belum aplikasi produksi.</strong></p></header>
-<main>
-<div class="preflight-tag">✓ Konfigurasi Supabase terpasang</div>
-<h2>Proyek SENTARUM Staging</h2>
-<div class="fixed-project"><strong>sentarum-staging</strong><div class="domain" id="projectLabel"></div><div class="small">Project URL dan publishable key tertanam di index.html — tidak perlu diisi setiap login.</div></div>
-<form id="probeForm" autocomplete="off">
-  <h2 style="margin-top:15px">Masuk sebagai Admin Staging</h2>
-  <div class="grid">
-    <div class="field"><label for="email">Email login</label><input id="email" type="email" required value="admin@sentarum.go.id" autocomplete="username"></div>
-    <div class="field"><label for="password">Password akun Admin</label><input id="password" type="password" required autocomplete="off" placeholder="Password akun uji"></div>
-  </div>
-  <div class="note">Password hanya dikirim ke Supabase Auth pada proyek staging di atas. Password dan token sesi tidak disimpan pada localStorage atau di kode halaman. Publishable key adalah kunci publik, bukan kunci rahasia.</div>
-  <div class="actions"><button id="run" type="submit">Uji login dan hak baca</button><button id="clear" class="secondary" type="button">Kosongkan password</button></div>
-</form>
-<section id="results" class="status hide" aria-live="polite"><h2>Hasil pengujian</h2><div id="checks"></div><div class="field" style="margin-top:18px"><label for="summary">Ringkasan aman untuk dikirim ke ChatGPT</label><div id="summary" class="summary"></div></div><button id="copy" type="button" class="secondary">Salin hasil (tanpa password / token)</button><p class="meta">Pengujian ini dilakukan lewat browser Anda. Pengamanan pengguna non-Admin masih perlu diuji tersendiri dengan akun kedua.</p></section>
-</main>
-<footer>SENTARUM Staging · diagnostik baca-saja · bukan halaman login produksi</footer>
+</head><body><div class="wrap">
+<header><small>SENTARUM · SUPABASE STAGING</small><h1>Uji Simpan Data Admin</h1><p>Tahap 011 — Pengujian sungguhan untuk <b>buat, baca, ubah, dan hapus</b> data simulasi di Supabase. Tabel Perjalanan Dinas, SPJ, evidence, dan Renstra tidak diubah.</p></header>
+<main class="panel">
+<div class="eyebrow">TAHAP 011 · HANYA DATA SIMULASI</div>
+<div class="project"><strong>sentarum-staging</strong><p>twwadofupxcupmjzdbgj.supabase.co</p><p>Alamat proyek dan publishable key sudah ditanam; tidak perlu diisi ulang.</p></div>
+<form id="form" autocomplete="off"><h2>Masuk sebagai Admin</h2><div class="row"><div><label for="email">Email Admin</label><input id="email" type="email" value="admin@sentarum.go.id" autocomplete="username" required></div><div><label for="password">Password Admin</label><input id="password" type="password" placeholder="Masukkan password" autocomplete="off" required></div></div>
+<div class="note">Password hanya digunakan untuk login Supabase Auth. Token tidak ditampilkan atau disimpan dalam browser. Data uji akan dihapus setelah diperiksa.</div>
+<div class="buttons"><button id="run" type="submit">Uji Simpan & Hapus</button><button id="clear" type="button" class="secondary">Kosongkan password</button></div>
+</form><div class="note warn">Jalankan SQL 011 melalui SQL Editor terlebih dahulu. Halaman ini bukan aplikasi resmi dan tidak dipakai untuk menyimpan dokumen instansi. Jika ada pengujian yang gagal, kirim ringkasan tanpa password atau token.</div>
+<section id="status" class="status" aria-live="polite"><h2>Hasil uji melalui browser</h2><div id="checks"></div><label>Ringkasan aman untuk dikirim</label><div id="summary" class="copybox"></div><div class="buttons"><button class="secondary" id="copy" type="button">Salin hasil</button></div></section>
+</main><footer>SENTARUM STAGING — Tahap 011 · Bukan aplikasi produksi · Tidak menyimpan sesi setelah uji</footer>
 </div>
 <script>
 (()=>{'use strict';
-const $=id=>document.getElementById(id);
-const PROJECT_URL='https://twwadofupxcupmjzdbgj.supabase.co';
-const PUBLISHABLE_KEY='sb_publishable_9jlv_4EBKclG0evCSbWl8A_qPo1Trdw';
-$('projectLabel').textContent=PROJECT_URL;
-const state={summary:''};
-const items=[];
-function add(ok,title,detail){items.push({ok,title,detail});const box=document.createElement('div');box.className='result '+(ok?'good':'bad');const dot=document.createElement('span');dot.className='dot';dot.textContent=ok?'✓':'!';const body=document.createElement('div');const strong=document.createElement('strong');strong.textContent=title;const div=document.createElement('div');div.className='small';div.textContent=detail;body.append(strong,div);box.append(dot,body);$('checks').append(box)}
-function redact(s){return String(s||'').replace(/sb_secret_[A-Za-z0-9_-]+/g,'[KUNCI RAHASIA]') .replace(/eyJ[A-Za-z0-9._-]{20,}/g,'[TOKEN]') .slice(0,240)}
-function setReport(){const text=['SENTARUM STAGING — UJI LOGIN ADMIN (READ-ONLY)',...items.map(x=>(x.ok?'LULUS':'PERLU DIPERIKSA')+' — '+x.title+': '+x.detail)];state.summary=text.join('\n');$('summary').textContent=state.summary;$('results').classList.remove('hide')}
-function validateUrl(str){const u=new URL(str.trim());if(u.protocol!=='https:'||!/^[-a-z0-9]+\.supabase\.co$/.test(u.hostname)||u.username||u.password||u.port||u.pathname!=='/'||u.search||u.hash){throw Error('Project URL tidak sesuai format https://PROJECT_REF.supabase.co')}return u.origin}
-function checkKey(key){if(!/^sb_publishable_[A-Za-z0-9_-]{16,}$/.test(key)){throw Error('Gunakan hanya Publishable key yang diawali sb_publishable_. Jangan gunakan secret key atau service_role.')}}
-async function request(url,options){const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),18000);try{return await fetch(url,{...options,signal:ctrl.signal,cache:'no-store',redirect:'error',credentials:'omit'})}finally{clearTimeout(timer)}}
-async function getRows(origin,key,token,table,fields,limit){const url=origin+'/rest/v1/'+table+'?select='+encodeURIComponent(fields)+'&limit='+limit;const headers={'apikey':key,Accept:'application/json'};if(token)headers.Authorization='Bearer '+token;const res=await request(url,{method:'GET',headers});let rows=null;try{rows=await res.json()}catch(_){};return {status:res.status,ok:res.ok,rows,code:rows&&rows.code?redact(rows.code):''}}
-$('clear').addEventListener('click',()=>{$('password').value='';$('results').classList.add('hide');$('checks').textContent='';$('summary').textContent='';state.summary='';$('password').focus()});
-$('copy').addEventListener('click',async()=>{if(!state.summary)return;try{await navigator.clipboard.writeText(state.summary);$('copy').textContent='Hasil tersalin'}catch(_){$('copy').textContent='Pilih teks ringkasan lalu salin manual'}});
-$('probeForm').addEventListener('submit',async e=>{
- e.preventDefault();$('checks').textContent='';$('summary').textContent='';$('results').classList.remove('hide');items.length=0;state.summary='';$('run').disabled=true;$('run').textContent='Sedang menguji…';
- let token='';try{
-  const origin=validateUrl(PROJECT_URL);const key=PUBLISHABLE_KEY;checkKey(key);
-  const email=$('email').value.trim();const pass=$('password').value;
-  const anon=await getRows(origin,key,'','module_registry','module_key',1);
-  const anonBlocked=(!anon.ok)|| (Array.isArray(anon.rows)&&anon.rows.length===0);
-  add(anonBlocked,'Akses tanpa login tidak dapat membaca katalog',anonBlocked?'Akses anonim tertutup ('+anon.status+').':'Perlu audit: katalog tampak bisa dibaca anonim (HTTP '+anon.status+').');
-  let auth;
-  try{
-    const response=await request(origin+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
-    const body=await response.json();auth={status:response.status,ok:response.ok,body};
-  }finally{$('password').value=''}
-  if(!auth.ok||!auth.body||!auth.body.access_token){const m=(auth.body&&(auth.body.msg||auth.body.error_description||auth.body.error_code||auth.body.message||auth.body.error))||'Login tidak berhasil';add(false,'Login Admin','HTTP '+auth.status+' — '+redact(m)+'. Periksa password/status verifikasi email di Authentication → Users.');setReport();return}
-  token=auth.body.access_token;add(true,'Login Admin berhasil','Token sesi diterima dari Supabase Auth; tidak disimpan atau ditampilkan.');
-  const moduleResult=await getRows(origin,key,token,'module_registry','module_key',100);
-  const moduleCount=Array.isArray(moduleResult.rows)?moduleResult.rows.length:-1;
-  add(moduleResult.ok&&moduleCount===46,'Baca katalog modul Admin',moduleResult.ok?moduleCount+' modul terlihat (target awal 46).':'HTTP '+moduleResult.status+', kode '+(moduleResult.code||'tidak ada'));
-  const renstraResult=await getRows(origin,key,token,'renstra_annual_targets','year',100);
-  const renstraCount=Array.isArray(renstraResult.rows)?renstraResult.rows.length:-1;
-  add(renstraResult.ok&&renstraCount===15,'Baca target Renstra 2025–2029',renstraResult.ok?renstraCount+' baris target tahunan terlihat (target awal 15).':'HTTP '+renstraResult.status+', kode '+(renstraResult.code||'tidak ada'));
-  const spj=await getRows(origin,key,token,'spj_packages','id',1);
-  add(!spj.ok,'Akses SPJ masih tertutup',spj.ok?'PERLU AUDIT: tabel SPJ dapat di-query (HTTP 200).':'Permintaan SPJ ditolak (HTTP '+spj.status+').');
-  setReport();
- }catch(err){add(false,'Pengujian berhenti',redact(err.message||err));setReport();}finally{token='';$('run').disabled=false;$('run').textContent='Uji login dan hak baca'}
+const ORIGIN='https://twwadofupxcupmjzdbgj.supabase.co';
+const KEY='sb_publishable_9jlv_4EBKclG0evCSbWl8A_qPo1Trdw';
+const $=id=>document.getElementById(id), results=[];
+const push=(ok,title,detail)=>{results.push({ok,title,detail});const box=document.createElement('div');box.className='result '+(ok?'good':'bad');const circle=document.createElement('div');circle.className='symbol';circle.textContent=ok?'✓':'!';const msg=document.createElement('div');const strong=document.createElement('strong');strong.textContent=title;const d=document.createElement('span');d.className='detail';d.textContent=detail;msg.append(strong,d);box.append(circle,msg);$('checks').append(box);};
+const report=()=>{$('summary').textContent=['SENTARUM STAGING — UJI ADMIN TULIS 011',...results.map(x=>(x.ok?'LULUS':'GAGAL')+' — '+x.title+': '+x.detail)].join('\n');$('status').classList.add('show');};
+const safe=t=>String(t||'').replace(/eyJ[A-Za-z0-9._-]{15,}/g,'[TOKEN]').replace(/sb_secret_[A-Za-z0-9_-]+/g,'[SECRET]').slice(0,200);
+async function request(path,options={}){const ctrl=new AbortController();const t=setTimeout(()=>ctrl.abort(),20000);try{const res=await fetch(ORIGIN+path,{...options,headers:{apikey:KEY,Accept:'application/json',...(options.headers||{})},signal:ctrl.signal,cache:'no-store',redirect:'error',credentials:'omit'});let payload=null;try{payload=await res.json()}catch(_){};return {ok:res.ok,status:res.status,data:payload}}finally{clearTimeout(t)}}
+const authHeaders=token=>({Authorization:'Bearer '+token});
+$('clear').addEventListener('click',()=>{$('password').value='';$('password').focus()});
+$('copy').addEventListener('click',async()=>{try{await navigator.clipboard.writeText($('summary').textContent);$('copy').textContent='Hasil disalin'}catch(_){$('copy').textContent='Silakan salin teks ringkasan secara manual'}});
+$('form').addEventListener('submit',async e=>{e.preventDefault();results.length=0;$('checks').textContent='';$('status').classList.remove('show');$('run').disabled=true;$('run').textContent='Sedang menguji…';
+let token='',rowId='',deleted=false,owner='',org='',cleanupError='';
+try{
+  const anon=await request('/rest/v1/sentarum_admin_sandbox?select=id&limit=1');
+  push(!anon.ok||(Array.isArray(anon.data)&&anon.data.length===0),'Akses anonim tidak bisa membaca tabel uji',!anon.ok?'Ditolak HTTP '+anon.status:'Tidak ada baris terlihat (HTTP '+anon.status+')');
+  let auth;try{auth=await request('/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:$('email').value.trim(),password:$('password').value})})}finally{$('password').value=''}
+  if(!auth.ok||!auth.data||!auth.data.access_token||!auth.data.user){push(false,'Login Admin','HTTP '+auth.status+' — '+safe(auth.data&&(auth.data.msg||auth.data.error_description||auth.data.message||auth.data.error)) );return;}
+  token=auth.data.access_token;owner=auth.data.user.id;
+  push(true,'Login Admin','Login berhasil; token hanya di memori sementara.');
+  const orgReq=await request('/rest/v1/organizations?select=id,code&code=eq.SETWAN_KAPUAS_HULU&limit=1',{headers:authHeaders(token)});
+  if(!orgReq.ok||!Array.isArray(orgReq.data)||orgReq.data.length!==1){push(false,'Baca organisasi','Tidak tersedia tepat satu organisasi (HTTP '+orgReq.status+').');return;}
+  org=orgReq.data[0].id;push(true,'Baca organisasi','Organisasi Sekretariat DPRD ditemukan.');
+  const note='UJI-STAGING-011-'+Date.now().toString(36);
+  const inserted=await request('/rest/v1/sentarum_admin_sandbox?select=id,note',{method:'POST',headers:{...authHeaders(token),'Content-Type':'application/json',Prefer:'return=representation'},body:JSON.stringify({org_id:org,owner_user_id:owner,note})});
+  if(!inserted.ok||!Array.isArray(inserted.data)||inserted.data.length!==1||!inserted.data[0].id){push(false,'Simpan data uji','Gagal, HTTP '+inserted.status+'.');return;}
+  rowId=inserted.data[0].id;push(true,'Simpan data uji','1 baris simulasi berhasil dibuat di server.');
+  const read=await request('/rest/v1/sentarum_admin_sandbox?select=id,note&id=eq.'+encodeURIComponent(rowId),{headers:authHeaders(token)});
+  const readOK=read.ok&&Array.isArray(read.data)&&read.data.length===1&&read.data[0].note===note;
+  push(readOK,'Baca kembali data uji',readOK?'Data sesuai sumber dari server.':'Tidak cocok, HTTP '+read.status+'.');if(!readOK)return;
+  const updated=await request('/rest/v1/sentarum_admin_sandbox?id=eq.'+encodeURIComponent(rowId)+'&select=id,note',{method:'PATCH',headers:{...authHeaders(token),'Content-Type':'application/json',Prefer:'return=representation'},body:JSON.stringify({note:note+'-EDIT'})});
+  const updateOK=updated.ok&&Array.isArray(updated.data)&&updated.data.length===1&&updated.data[0].note===note+'-EDIT';
+  push(updateOK,'Ubah data uji',updateOK?'Perubahan berhasil tersimpan.':'Gagal, HTTP '+updated.status+'.');if(!updateOK)return;
+  const removed=await request('/rest/v1/sentarum_admin_sandbox?id=eq.'+encodeURIComponent(rowId)+'&select=id',{method:'DELETE',headers:{...authHeaders(token),Prefer:'return=representation'}});
+  const removedOK=removed.ok&&Array.isArray(removed.data)&&removed.data.length===1;
+  if(removedOK){deleted=true;rowId='';}
+  push(removedOK,'Hapus data uji',removedOK?'Baris simulasi berhasil dihapus.':'Gagal, HTTP '+removed.status+'.');if(!removedOK)return;
+  const remaining=await request('/rest/v1/sentarum_admin_sandbox?select=id&limit=1',{headers:authHeaders(token)});
+  push(remaining.ok&&Array.isArray(remaining.data)&&remaining.data.length===0,'Data uji tidak tertinggal',remaining.ok?'Sisa baris terlihat: '+(Array.isArray(remaining.data)?remaining.data.length:'?'):'HTTP '+remaining.status);
+  const spj=await request('/rest/v1/spj_packages?select=id&limit=1',{headers:authHeaders(token)});
+  push(!spj.ok,'SPJ tetap tertutup',!spj.ok?'Tabel SPJ masih tertutup untuk baca (HTTP '+spj.status+').':'PERLU TINJAU: SPJ bisa dibaca.');
+}catch(err){push(false,'Pengujian terhenti',safe(err.message||err));}
+finally{
+  if(token&&rowId&&!deleted){try{const cleanup=await request('/rest/v1/sentarum_admin_sandbox?id=eq.'+encodeURIComponent(rowId),{method:'DELETE',headers:{...authHeaders(token),Prefer:'return=minimal'}});if(cleanup.ok){push(true,'Pembersihan otomatis','Percobaan hapus baris setelah kegagalan berhasil.');rowId=''}else{cleanupError='HTTP '+cleanup.status;}}catch(err){cleanupError=safe(err.message||err)}if(cleanupError)push(false,'Pembersihan otomatis gagal','Periksa tabel sentarum_admin_sandbox di SQL Editor; '+cleanupError+'.')}
+ token='';owner='';org='';$('run').disabled=false;$('run').textContent='Uji Simpan & Hapus';report();
+}
 });
 })();
 </script>
-</body>
-</html>
+</body></html>
