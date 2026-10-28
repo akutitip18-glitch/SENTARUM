@@ -187,10 +187,10 @@
 <aside class="sidebar" id="sidebar">
   <div class="brand"><div class="brandrow"><div class="brandmark">S</div><div class="brandname">SENTARUM<span>Sistem Elektronik Tata Usaha dan Rekam Urusan Majelis</span></div></div></div>
   <nav class="nav" id="nav"></nav>
-  <div class="sidefoot">SEKRETARIAT DPRD<br>KABUPATEN KAPUAS HULU<br><span class="version">STAGING · v0.26.1 (Formulir operasional lokal)</span></div>
+  <div class="sidefoot">SEKRETARIAT DPRD<br>KABUPATEN KAPUAS HULU<br><span class="version">STAGING · v0.26.2 (Data Server + Pratinjau Lokal)</span></div>
 </aside>
 <main class="main">
-<header class="topbar"><div style="display:flex;align-items:center;gap:12px;min-width:0"><button class="btn mobile-menu" onclick="toggleSidebar()" aria-label="Buka menu navigasi">☰</button><button type="button" class="btn sentarum-back-btn" id="sentarumBackButton" onclick="sentarumGoBack0251()" aria-label="Kembali ke Dashboard" title="Kembali ke Dashboard" hidden><span aria-hidden="true" class="back-arrow">←</span><span class="back-text">Kembali</span><span class="back-destination" id="sentarumBackDestination"></span></button><div class="pageinfo"><h1 id="pageTitle">Ringkasan SENTARUM</h1><p id="pageSubtitle">Satu kali input, banyak keluaran — data terhubung dan dapat ditelusuri.</p></div></div><div class="topactions"><span class="chip"><span class="dot" id="storageDot"></span><span id="storageLabel">Tersimpan lokal</span></span><button class="btn" onclick="undoAction()" id="undoBtn" title="Undo perubahan terakhir">↶ Undo</button><button class="btn" onclick="redoAction()" id="redoBtn" title="Redo perubahan">↷ Redo</button><button class="btn s12-open" type="button" id="s12OpenBtn" onclick="window.s12Open()">☁ Renstra Supabase</button><button class="btn primary" onclick="openQuickAdd()">＋ Input Data</button></div></header>
+<header class="topbar"><div style="display:flex;align-items:center;gap:12px;min-width:0"><button class="btn mobile-menu" onclick="toggleSidebar()" aria-label="Buka menu navigasi">☰</button><button type="button" class="btn sentarum-back-btn" id="sentarumBackButton" onclick="sentarumGoBack0251()" aria-label="Kembali ke Dashboard" title="Kembali ke Dashboard" hidden><span aria-hidden="true" class="back-arrow">←</span><span class="back-text">Kembali</span><span class="back-destination" id="sentarumBackDestination"></span></button><div class="pageinfo"><h1 id="pageTitle">Ringkasan SENTARUM</h1><p id="pageSubtitle">Satu kali input, banyak keluaran — data terhubung dan dapat ditelusuri.</p></div></div><div class="topactions"><span class="chip"><span class="dot" id="storageDot"></span><span id="storageLabel">Tersimpan lokal</span></span><button class="btn" onclick="undoAction()" id="undoBtn" title="Undo perubahan terakhir">↶ Undo</button><button class="btn" onclick="redoAction()" id="redoBtn" title="Redo perubahan">↷ Redo</button><button class="btn s12-open" type="button" id="s12OpenBtn" onclick="window.s12Open()">☁ Renstra Supabase</button><button class="btn s12-open" type="button" id="s13OpenBtn" onclick="window.s13Open()">☁ Data Server</button><button class="btn primary" onclick="openQuickAdd()">＋ Input Data Lokal</button></div></header>
 <div class="content" id="content"></div>
 </main>
 </div>
@@ -3799,7 +3799,7 @@ if(typeof window.settingsHtml==='function'){
   return temp.innerHTML;
  };
 }
-document.title='SENTARUM v0.26.1 — Supabase Staging (Renstra baca-saja)';
+document.title='SENTARUM v0.26.2 — Supabase Staging (Server Data 013)';
 window.s12Open=()=>{el('s12Layer').hidden=false;el('s12Close').focus();};
 el('s12Close').addEventListener('click',()=>{el('s12Layer').hidden=true;});
 el('s12Layer').addEventListener('click',e=>{if(e.target===el('s12Layer'))el('s12Layer').hidden=true;});
@@ -3810,6 +3810,102 @@ el('s12Logout').addEventListener('click',async()=>{const old=jwt;clearSession();
 el('s12Form').addEventListener('submit',async e=>{e.preventDefault();el('s12Login').disabled=true;setStatus('Sedang memeriksa login Admin…');let resp;try{resp=await api('/auth/v1/token?grant_type=password',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({email:el('s12Email').value.trim(),password:el('s12Password').value})});}catch(err){setStatus('Login gagal: tidak dapat menghubungi Supabase.','error');el('s12Login').disabled=false;el('s12Password').value='';return;}
  el('s12Password').value='';el('s12Login').disabled=false;if(!resp.ok||!resp.data?.access_token){setStatus('Login gagal (HTTP '+resp.status+'). Periksa email/password Admin.','error');return;}
  jwt=resp.data.access_token;el('s12LoginBlock').hidden=true;el('s12Logged').hidden=false;el('s12Who').textContent='Akses baca-saja · Supabase Staging · Sesi sementara';await load();});
+window.__SENTARUM_STAGE12_AUTH__={token:()=>jwt};
 })();
 </script>
+<style>
+#s13Layer[hidden]{display:none!important}#s13Layer{position:fixed;inset:0;z-index:1000000;background:#0b192bd9;padding:12px;display:flex;align-items:center;justify-content:center}
+#s13Panel{width:min(1100px,100%);max-height:96vh;overflow:auto;background:#fff;color:#132941;border-radius:16px;font:14px/1.5 system-ui,Arial,sans-serif;box-shadow:0 20px 65px #071a3955}
+#s13Panel *{box-sizing:border-box}#s13Panel header{background:#163550;color:white;padding:18px 22px;display:flex;gap:15px;justify-content:space-between;align-items:center}#s13Panel h2{font-size:20px;margin:0}#s13Panel .s13-sub{font-size:12px;color:#4e6880}
+#s13Panel button{cursor:pointer;border-radius:9px;font:inherit;font-weight:650;padding:10px 14px;border:1px solid #97c5bd;color:#065e52;background:#f5fffa}
+#s13Panel button:disabled{opacity:.45;cursor:not-allowed}#s13Panel button.primary{background:#0a7665;color:white;border-color:#0a7665}
+#s13Panel input,#s13Panel select,#s13Panel textarea{width:100%;padding:9px 10px;border-radius:8px;border:1px solid #bbcbd9;background:white;color:#122b42;font:inherit}
+#s13Panel textarea{min-height:80px;resize:vertical}#s13Panel label{display:block;color:#34516b;font-size:12px;font-weight:700;margin-bottom:5px}
+#s13Panel .s13-pad{padding:16px 21px}#s13Panel .s13-notice{padding:12px;border-radius:9px;background:#eff6ff;margin:10px 0;color:#21415b}
+#s13Panel .s13-notice.good{background:#e5f7ed;color:#176247}#s13Panel .s13-notice.bad{background:#fff1e8;color:#a33622}
+#s13Panel .s13-bar{display:flex;gap:10px;align-items:end;flex-wrap:wrap}#s13Panel .s13-bar>div{flex:1;min-width:190px}
+#s13Panel .s13-grid{display:grid;grid-template-columns:minmax(230px,330px) 1fr;gap:15px;margin-top:12px}
+#s13Panel .s13-area{border:1px solid #dbe5ed;border-radius:12px;padding:13px;min-width:0}
+#s13Panel .s13-record{display:block;width:100%;text-align:left;margin:7px 0;padding:10px!important;color:#183550!important;background:#fff!important;border:1px solid #dfebee!important}
+#s13Panel .s13-record.active{border-color:#059777!important;background:#effbf7!important}#s13Panel .s13-record small{display:block;color:#607487}
+#s13Panel .s13-fields{display:grid;grid-template-columns:1fr 1fr;gap:12px}#s13Panel .s13-fields .wide{grid-column:1/-1}
+#s13Panel .s13-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:16px;border-top:1px solid #e1e8ed;padding-top:15px}#s13Panel details{margin-top:12px;border:1px solid #dae7ee;border-radius:10px;padding:10px}
+#s13Panel summary{cursor:pointer;font-weight:750;color:#196353}#s13Panel .s13-flag{font-size:11px;color:#806324}
+@media(max-width:650px){#s13Panel .s13-grid{grid-template-columns:1fr}#s13Panel .s13-fields{grid-template-columns:1fr}#s13Panel .s13-pad{padding:11px}#s13Panel header{padding:12px}#s13Panel h2{font-size:17px}}
+</style>
+<div id="s13Layer" hidden role="dialog" aria-modal="true" aria-label="Data server SENTARUM">
+<section id="s13Panel">
+<header><div><h2>☁ Data Server — SENTARUM Staging 013</h2><div style="font-size:12px;opacity:.86">Register umum, draf, relasi dan riwayat perubahan · Supabase</div></div><button id="s13Close" type="button">Tutup</button></header>
+<div class="s13-pad">
+<div id="s13Status" class="s13-notice" role="status" aria-live="polite">Login Admin melalui tombol Renstra Supabase sebelum membuka data server.</div>
+<div class="s13-notice"><strong>Perbedaan penyimpanan:</strong> Semua data yang diisi di panel ini disimpan ke <b>Supabase Staging</b>. Formulir operasional lama di halaman belakang <b>masih lokal</b>. Belum ada migrasi otomatis data lokal. Perjalanan Dinas, Peserta, SPJ, dan berkas privat memerlukan transaksi khusus dan belum dibuka di panel ini.</div>
+<div class="s13-bar"><div><label for="s13Module">Pilih modul server</label><select id="s13Module"></select></div><button id="s13Refresh">↻ Muat ulang</button><button class="primary" id="s13New">＋ Tambah draf</button></div>
+<div class="s13-grid"><div class="s13-area"><strong>Data di server</strong><div class="s13-sub">Klik catatan untuk melanjutkan atau mengubahnya.</div><div id="s13List" style="max-height:380px;overflow:auto;margin-top:8px">Belum ada data dimuat.</div></div><div class="s13-area"><div id="s13EditorHead"><strong>Pilih data atau buat draf</strong></div><div id="s13Editor" style="margin-top:12px"></div></div></div>
+<div class="s13-sub" style="margin-top:12px">Admin hanya dapat mengelola organisasi yang diberikan kepadanya. Simpan draf tidak berarti dokumen resmi disetujui. Tidak ada tombol hapus permanen. Perubahan bersama memakai nomor revisi agar tidak saling menimpa.</div>
+</div></section></div>
+<script>
+(()=>{'use strict';
+const ROOT='https://twwadofupxcupmjzdbgj.supabase.co';
+const KEY='sb_publishable_9jlv_4EBKclG0evCSbWl8A_qPo1Trdw';
+const $=id=>document.getElementById(id);const BLOCK=new Set(['perjadin','peserta_perjadin','spj']);
+let organization=null,units=[],catalog=[],allRefs=[],list=[],chosen=null,formFields=[],busy=false;
+function token(){return window.__SENTARUM_STAGE12_AUTH__?.token?.()||'';}
+function status(msg,kind=''){const x=$('s13Status');x.textContent=msg;x.className='s13-notice '+kind;}
+async function api(path,opts={}){const t=token();if(!t)throw Error('Anda belum login Admin. Buka ☁ Renstra Supabase dan masuk dahulu.');const ac=new AbortController();const timer=setTimeout(()=>ac.abort(),25000);
+ try{const res=await fetch(ROOT+path,{...opts,headers:{apikey:KEY,Authorization:'Bearer '+t,Accept:'application/json',...(opts.headers||{})},credentials:'omit',cache:'no-store',redirect:'error',signal:ac.signal});const txt=await res.text();let data;try{data=txt?JSON.parse(txt):null}catch(_){data=txt}if(!res.ok)throw Error('HTTP '+res.status+' — '+String(data?.message||data?.hint||data?.error||txt).slice(0,230));return data;}finally{clearTimeout(timer);}}
+function node(tag,attrs={},str){const el=document.createElement(tag);for(const [k,v] of Object.entries(attrs)){if(k==='class')el.className=v;else if(k==='value')el.value=v;else if(k==='type')el.type=v;else el.setAttribute(k,v);}if(str!==undefined)el.textContent=String(str);return el;}
+function mdl(){return $('s13Module').value;}function mf(){return typeof MODULES==='object'?MODULES[mdl()]:null;}
+function fields(){return mf()?.fields||[];}
+function labelFor(r){const obj={...(r?.payload||{}),id:r?.id};try{const label=mf()?.label?.(obj);if(label)return String(label).slice(0,250);}catch(_){ }return String(obj.judul||obj.nama||obj.nomor||obj.kode||r?.display_title||'Catatan baru').slice(0,250);}
+function toUid(){const cryptoApi=window.crypto;return cryptoApi?.randomUUID?cryptoApi.randomUUID():null;}
+function refs(mod){return allRefs.filter(x=>x.module_key===mod&&x.state!=='archived');}
+function inputFor(field,val){const wrap=node('div',{class:(field.full?'wide':'')});const lab=node('label',{},field.label+(field.required?' *':''));wrap.append(lab);
+let inp;let ty=field.type||'text';if(ty==='textarea'){inp=node('textarea');inp.value=val??'';}
+else if(ty==='select'||ty==='rel'){inp=node('select');inp.append(node('option',{value:''},'— Pilih —'));
+ const options=ty==='select'?(Array.isArray(field.options)?field.options:[]):refs(field.module).map(x=>({value:x.id,label:x.display_title}));
+ for(const option of options){const v=typeof option==='object'?(option.value??option.label):option;const label=typeof option==='object'?(option.label??v):option;inp.append(node('option',{value:String(v)},String(label)));}inp.value=val??'';
+ if(val&&!Array.from(inp.options).some(o=>o.value===val)){inp.append(node('option',{value:String(val)},'Referensi belum tersedia di server — periksa'));inp.value=val;}
+}else{inp=node('input',{type:ty==='number'?'number':ty==='date'?'date':'text'});if(ty==='number')inp.min='0';inp.value=val??'';}
+inp.dataset.serverField=field.key;inp.dataset.required=field.required?'1':'0';if(ty==='rel')inp.dataset.relation=field.module||'';lab.htmlFor='s13_'+field.key;inp.id='s13_'+field.key;wrap.append(inp);
+if(ty==='rel'){const note=node('small',{class:'s13-sub'},'Sumber: '+(MODULES[field.module]?.title||field.module)+'. Pilih catatan server, tidak perlu mengetik ulang.');wrap.append(note);}return wrap;}
+function renderEditor(){const host=$('s13Editor'),head=$('s13EditorHead');host.replaceChildren();const m=mf();if(!m){head.textContent='Modul tidak memiliki formulir server terstruktur';return;}
+ const values=chosen?.payload||{};head.textContent=chosen?('Edit · '+chosen.display_title+' · Revisi '+chosen.revision):'Tambah draf · '+m.title;
+ const core=fields().filter(f=>f.type!=='hidden');const priorit=['judul','nama','nomor','kode','uraian','jenis','tahun','tanggal','mulai','akhir','status'];core.sort((a,b)=>{const ai=priorit.indexOf(a.key),bi=priorit.indexOf(b.key);return(ai<0?100:ai)-(bi<0?100:bi);});
+ const shown=core.slice(0,5),extras=core.slice(5);const grid=node('div',{class:'s13-fields'});shown.forEach(f=>grid.append(inputFor(f,values[f.key])));host.append(grid);
+ if(extras.length){const more=node('details');more.append(node('summary',{},`Isian lanjutan (${extras.length}) — buka bila diperlukan`));const other=node('div',{class:'s13-fields',style:'margin-top:10px'});extras.forEach(f=>other.append(inputFor(f,values[f.key])));more.append(other);host.append(more);}
+ const act=node('div',{class:'s13-actions'});const draft=node('button',{type:'button'},'Simpan draf ke server');draft.onclick=()=>save('draft');act.append(draft);
+ const active=node('button',{type:'button',class:'primary'},'Simpan sebagai register aktif');active.onclick=()=>save('active');act.append(active);
+ if(chosen){const archive=node('button',{type:'button'},'Arsipkan');archive.onclick=()=>{if(confirm('Arsipkan catatan ini? Jejaknya tetap tersimpan di server.'))save('archived');};act.append(archive);}
+ host.append(act);host.append(node('p',{class:'s13-sub'},'Berkas/dokumen dan verifikasi resmi tidak otomatis disahkan oleh tindakan ini.'));
+}
+function valuesNow(){const values={...(chosen?.payload||{})};const links=[];for(const inp of $('s13Editor').querySelectorAll('[data-server-field]')){const key=inp.dataset.serverField;values[key]=inp.value.trim();if(inp.dataset.relation&&inp.value)links.push({field:key,target_id:inp.value});}return {values,links};}
+function checkActive(vals){for(const f of fields()){if(f.required&&!String(vals[f.key]??'').trim()){const x=$('s13_'+f.key);x?.focus();x?.closest('details')?.setAttribute('open','');throw Error('Lengkapi '+f.label+' sebelum mengaktifkan register. Draf boleh disimpan tanpa isian ini.');}}if(vals.mulai&&vals.akhir&&vals.akhir<vals.mulai)throw Error('Tanggal akhir tidak boleh sebelum tanggal mulai.');}
+async function save(state){if(busy)return;let id=chosen?.id||toUid();if(!id)return status('Browser tidak mendukung ID aman. Gunakan browser modern.','bad');let mod=mdl();const unit=units.find(u=>u.code===catalog.find(m=>m.module_key===mod)?.owner_unit_code);if(!unit)return status('Unit pemilik modul belum tersedia. Hubungi Admin pengelola.','bad');
+ const {values,links}=valuesNow();try{if(state!=='draft')checkActive(values);busy=true;status('Menyimpan '+state+' ke server…');
+ const metadata=mf();const title=String(metadata?.label?.({...values,id})||values.judul||values.nama||values.nomor||'Draf '+mod).slice(0,250);
+ const args={p_id:id,p_org_id:organization.id,p_unit_id:unit.id,p_module_key:mod,p_title:title,p_payload:{...values,id},p_state:state,p_expected_revision:chosen?.revision??null,p_relations:links};
+ const data=await api('/rest/v1/rpc/sentarum_save_generic',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(args)});
+ if(!Array.isArray(data)||data.length!==1)throw Error('Hasil simpan tidak sesuai format RPC; periksa server.');
+ chosen=null;await loadList(id);status('Berhasil: '+mod+' '+state+' disimpan di Supabase · revisi '+data[0].new_revision,'good');
+ }catch(e){status('Gagal menyimpan: '+String(e.message).slice(0,300),'bad');}finally{busy=false;}}
+function drawList(){const host=$('s13List');host.replaceChildren();if(!list.length){host.append(node('p',{class:'s13-sub'},'Belum ada catatan server di modul ini. Klik Tambah draf.'));return;}
+for(const x of list){const b=node('button',{class:'s13-record'+(chosen?.id===x.id?' active':'')});b.append(node('span',{},x.display_title));b.append(node('small',{},`${x.state} · Revisi ${x.revision} · ${String(x.updated_at||'').slice(0,10)}`));b.onclick=()=>{chosen=x;drawList();renderEditor();};host.append(b);}}
+async function loadList(openId){const mod=mdl();if(!mod)return;try{status('Memuat '+mod+' dari server…');const p='/rest/v1/business_records?select=id,module_key,unit_id,display_title,payload,state,revision,updated_at&org_id=eq.'+encodeURIComponent(organization.id)+'&module_key=eq.'+encodeURIComponent(mod)+'&order=updated_at.desc&limit=100';list=await api(p);if(!Array.isArray(list))throw Error('Data bukan daftar');chosen=list.find(x=>x.id===openId)||null;drawList();renderEditor();status('Memuat '+list.length+' catatan '+mod+' dari Supabase Staging.','good');}catch(e){status('Gagal membaca: '+e.message,'bad');}}
+async function init(){if(!token()){window.s12Open?.();status('Masuk Admin melalui panel Renstra Supabase terlebih dahulu. Setelah berhasil, buka ☁ Data Server.');return false;}
+ try{status('Memeriksa organisasi, unit, katalog, dan referensi server…');const [o,u,m,r]=await Promise.all([
+ api('/rest/v1/organizations?select=id,code,name&code=eq.SETWAN_KAPUAS_HULU&limit=1'),
+ api('/rest/v1/org_units?select=id,org_id,code,name,active&active=eq.true&limit=100'),
+ api('/rest/v1/module_registry?select=module_key,display_name,owner_unit_code,lifecycle&lifecycle=eq.active&limit=100'),
+ api('/rest/v1/business_records?select=id,module_key,display_title,state&limit=1000')]);
+ if(!Array.isArray(o)||o.length!==1||!Array.isArray(u)||!Array.isArray(m)||!Array.isArray(r))throw Error('Data referensi tidak sesuai format');organization=o[0];units=u.filter(x=>x.org_id===organization.id);catalog=m;allRefs=r;
+ const selector=$('s13Module'),before=selector.value;selector.replaceChildren();for(const x of catalog){if(BLOCK.has(x.module_key)||!MODULES?.[x.module_key]||!units.some(u=>u.code===x.owner_unit_code))continue;selector.append(node('option',{value:x.module_key},x.display_name));}
+ selector.value=[...selector.options].some(x=>x.value===before)?before:([...selector.options].some(x=>x.value==='agenda')?'agenda':selector.options[0]?.value||'');
+ if(!selector.value)throw Error('Tidak ada modul dengan formulir dan unit pemilik yang cocok');await loadList();return true;
+ }catch(e){status('Gagal membuka Data Server: '+e.message,'bad');return false;}}
+window.s13Open=async()=>{$('s13Layer').hidden=false;await init();};
+$('s13Close').onclick=()=>{$('s13Layer').hidden=true;};$('s13Layer').addEventListener('click',e=>{if(e.target===$('s13Layer'))$('s13Layer').hidden=true;});
+$('s13Module').onchange=()=>{chosen=null;loadList();};$('s13Refresh').onclick=()=>init();$('s13New').onclick=()=>{chosen=null;drawList();renderEditor();status('Draf baru. Lengkapi isian inti, lalu simpan ke server.');};
+})();
+</script>
+
 </body></html>
