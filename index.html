@@ -1,0 +1,85 @@
+<!doctype html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src https://*.supabase.co; form-action 'none'; base-uri 'none'; img-src 'none'; object-src 'none'">
+<title>SENTARUM Staging — Login Admin & Uji Hak Akses</title>
+<meta name="robots" content="noindex, nofollow">
+<style>
+:root{font-family:system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;color:#16243b;background:#f6f9fc;font-synthesis:none}
+*{box-sizing:border-box}body{margin:0;padding:30px 16px 60px;line-height:1.55}.wrap{max-width:780px;margin:auto}
+header{background:#112642;color:#fff;border-radius:18px;padding:26px 30px;box-shadow:0 8px 28px #11264216}
+.fixed-project{background:#edf8f7;border:1px solid #b6ddda;padding:15px 18px;border-radius:12px;margin:12px 0 23px}.fixed-project strong{display:block;font-size:.97rem}.fixed-project .domain{font-size:.9rem;color:#066b65;overflow-wrap:anywhere}.fixed-project .small{font-size:.8rem;color:#5b726f;margin-top:5px}.preflight-tag{display:inline-flex;gap:7px;align-items:center;background:#eff9f5;color:#096b53;padding:5px 11px;border-radius:999px;font-weight:750;font-size:.74rem;margin:0 0 12px}header .eyebrow{font-weight:700;letter-spacing:.13em;color:#8cdaca;font-size:.73rem}h1{font-size:clamp(1.5rem,3.4vw,2.2rem);line-height:1.22;margin:8px 0 10px}header p{color:#d7e3f4;margin:0;max-width:600px}
+main{background:white;border:1px solid #dbe5ef;border-radius:18px;padding:26px 30px;margin-top:20px;box-shadow:0 6px 20px #1126420a}
+h2{font-size:1.16rem;margin:0 0 12px}.intro{font-size:.91rem;color:#536478;margin:0 0 19px}.field{margin:0 0 15px}label{display:block;font-size:.9rem;font-weight:650;margin-bottom:6px}input{width:100%;border:1px solid #afc1d5;border-radius:10px;font:inherit;padding:11px 12px;background:#fff;color:#18253b}input:focus{outline:3px solid #bceae0;border-color:#087d70}.hint{color:#66758a;font-size:.82rem;margin:5px 0 0}.grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:20px}button{cursor:pointer;font:inherit;font-weight:700;border-radius:10px;padding:11px 17px;border:1px solid #067d76;background:#067d76;color:white}button.secondary{color:#174c54;border-color:#a9c7ca;background:#f6ffff}button:disabled{opacity:.55;cursor:not-allowed}button:hover:not(:disabled){filter:brightness(.96)}
+.note{padding:12px 15px;border-radius:10px;background:#f0f8f7;border-left:4px solid #087d70;color:#305450;font-size:.91rem;margin:16px 0}.warning{background:#fff9ed;border-color:#cb8b16;color:#71501d}.status{margin-top:23px}.hide{display:none}.result{display:flex;gap:13px;align-items:flex-start;border:1px solid #e0e8f0;border-radius:11px;padding:12px 14px;margin:10px 0}.dot{width:24px;height:24px;line-height:24px;flex:0 0 24px;border-radius:50%;text-align:center;font-size:.84rem;font-weight:800;background:#edf3f8;color:#586777}.result.good .dot{background:#def7e9;color:#11633f}.result.bad .dot{background:#ffe2e2;color:#a52424}.result .small{font-size:.82rem;color:#66758a;overflow-wrap:anywhere}.result strong{font-size:.91rem}.summary{white-space:pre-wrap;font-size:.83rem;background:#f5f7fa;border:1px solid #dee7ef;border-radius:11px;padding:14px;color:#24384f;min-height:80px}.meta{font-size:.82rem;color:#697a8e;margin-top:10px}footer{margin-top:15px;color:#64748b;text-align:center;font-size:.81rem}@media(max-width:600px){body{padding:12px 10px 30px}header,main{padding:20px 16px}.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header><div class="eyebrow">SENTARUM · SUPABASE STAGING</div><h1>Masuk sebagai Administrator</h1><p>Tahap 010 — Pengujian login dan izin baca Renstra langsung dari Supabase. <strong>Mode baca-saja; belum aplikasi produksi.</strong></p></header>
+<main>
+<div class="preflight-tag">✓ Konfigurasi Supabase terpasang</div>
+<h2>Proyek SENTARUM Staging</h2>
+<div class="fixed-project"><strong>sentarum-staging</strong><div class="domain" id="projectLabel"></div><div class="small">Project URL dan publishable key tertanam di index.html — tidak perlu diisi setiap login.</div></div>
+<form id="probeForm" autocomplete="off">
+  <h2 style="margin-top:15px">Masuk sebagai Admin Staging</h2>
+  <div class="grid">
+    <div class="field"><label for="email">Email login</label><input id="email" type="email" required value="admin@sentarum.go.id" autocomplete="username"></div>
+    <div class="field"><label for="password">Password akun Admin</label><input id="password" type="password" required autocomplete="off" placeholder="Password akun uji"></div>
+  </div>
+  <div class="note">Password hanya dikirim ke Supabase Auth pada proyek staging di atas. Password dan token sesi tidak disimpan pada localStorage atau di kode halaman. Publishable key adalah kunci publik, bukan kunci rahasia.</div>
+  <div class="actions"><button id="run" type="submit">Uji login dan hak baca</button><button id="clear" class="secondary" type="button">Kosongkan password</button></div>
+</form>
+<section id="results" class="status hide" aria-live="polite"><h2>Hasil pengujian</h2><div id="checks"></div><div class="field" style="margin-top:18px"><label for="summary">Ringkasan aman untuk dikirim ke ChatGPT</label><div id="summary" class="summary"></div></div><button id="copy" type="button" class="secondary">Salin hasil (tanpa password / token)</button><p class="meta">Pengujian ini dilakukan lewat browser Anda. Pengamanan pengguna non-Admin masih perlu diuji tersendiri dengan akun kedua.</p></section>
+</main>
+<footer>SENTARUM Staging · diagnostik baca-saja · bukan halaman login produksi</footer>
+</div>
+<script>
+(()=>{'use strict';
+const $=id=>document.getElementById(id);
+const PROJECT_URL='https://twwadofupxcupmjzdbgj.supabase.co';
+const PUBLISHABLE_KEY='sb_publishable_9jlv_4EBKclG0evCSbWl8A_qPo1Trdw';
+$('projectLabel').textContent=PROJECT_URL;
+const state={summary:''};
+const items=[];
+function add(ok,title,detail){items.push({ok,title,detail});const box=document.createElement('div');box.className='result '+(ok?'good':'bad');const dot=document.createElement('span');dot.className='dot';dot.textContent=ok?'✓':'!';const body=document.createElement('div');const strong=document.createElement('strong');strong.textContent=title;const div=document.createElement('div');div.className='small';div.textContent=detail;body.append(strong,div);box.append(dot,body);$('checks').append(box)}
+function redact(s){return String(s||'').replace(/sb_secret_[A-Za-z0-9_-]+/g,'[KUNCI RAHASIA]') .replace(/eyJ[A-Za-z0-9._-]{20,}/g,'[TOKEN]') .slice(0,240)}
+function setReport(){const text=['SENTARUM STAGING — UJI LOGIN ADMIN (READ-ONLY)',...items.map(x=>(x.ok?'LULUS':'PERLU DIPERIKSA')+' — '+x.title+': '+x.detail)];state.summary=text.join('\n');$('summary').textContent=state.summary;$('results').classList.remove('hide')}
+function validateUrl(str){const u=new URL(str.trim());if(u.protocol!=='https:'||!/^[-a-z0-9]+\.supabase\.co$/.test(u.hostname)||u.username||u.password||u.port||u.pathname!=='/'||u.search||u.hash){throw Error('Project URL tidak sesuai format https://PROJECT_REF.supabase.co')}return u.origin}
+function checkKey(key){if(!/^sb_publishable_[A-Za-z0-9_-]{16,}$/.test(key)){throw Error('Gunakan hanya Publishable key yang diawali sb_publishable_. Jangan gunakan secret key atau service_role.')}}
+async function request(url,options){const ctrl=new AbortController();const timer=setTimeout(()=>ctrl.abort(),18000);try{return await fetch(url,{...options,signal:ctrl.signal,cache:'no-store',redirect:'error',credentials:'omit'})}finally{clearTimeout(timer)}}
+async function getRows(origin,key,token,table,fields,limit){const url=origin+'/rest/v1/'+table+'?select='+encodeURIComponent(fields)+'&limit='+limit;const headers={'apikey':key,Accept:'application/json'};if(token)headers.Authorization='Bearer '+token;const res=await request(url,{method:'GET',headers});let rows=null;try{rows=await res.json()}catch(_){};return {status:res.status,ok:res.ok,rows,code:rows&&rows.code?redact(rows.code):''}}
+$('clear').addEventListener('click',()=>{$('password').value='';$('results').classList.add('hide');$('checks').textContent='';$('summary').textContent='';state.summary='';$('password').focus()});
+$('copy').addEventListener('click',async()=>{if(!state.summary)return;try{await navigator.clipboard.writeText(state.summary);$('copy').textContent='Hasil tersalin'}catch(_){$('copy').textContent='Pilih teks ringkasan lalu salin manual'}});
+$('probeForm').addEventListener('submit',async e=>{
+ e.preventDefault();$('checks').textContent='';$('summary').textContent='';$('results').classList.remove('hide');items.length=0;state.summary='';$('run').disabled=true;$('run').textContent='Sedang menguji…';
+ let token='';try{
+  const origin=validateUrl(PROJECT_URL);const key=PUBLISHABLE_KEY;checkKey(key);
+  const email=$('email').value.trim();const pass=$('password').value;
+  const anon=await getRows(origin,key,'','module_registry','module_key',1);
+  const anonBlocked=(!anon.ok)|| (Array.isArray(anon.rows)&&anon.rows.length===0);
+  add(anonBlocked,'Akses tanpa login tidak dapat membaca katalog',anonBlocked?'Akses anonim tertutup ('+anon.status+').':'Perlu audit: katalog tampak bisa dibaca anonim (HTTP '+anon.status+').');
+  let auth;
+  try{
+    const response=await request(origin+'/auth/v1/token?grant_type=password',{method:'POST',headers:{apikey:key,'Content-Type':'application/json'},body:JSON.stringify({email,password:pass})});
+    const body=await response.json();auth={status:response.status,ok:response.ok,body};
+  }finally{$('password').value=''}
+  if(!auth.ok||!auth.body||!auth.body.access_token){const m=(auth.body&&(auth.body.msg||auth.body.error_description||auth.body.error_code||auth.body.message||auth.body.error))||'Login tidak berhasil';add(false,'Login Admin','HTTP '+auth.status+' — '+redact(m)+'. Periksa password/status verifikasi email di Authentication → Users.');setReport();return}
+  token=auth.body.access_token;add(true,'Login Admin berhasil','Token sesi diterima dari Supabase Auth; tidak disimpan atau ditampilkan.');
+  const moduleResult=await getRows(origin,key,token,'module_registry','module_key',100);
+  const moduleCount=Array.isArray(moduleResult.rows)?moduleResult.rows.length:-1;
+  add(moduleResult.ok&&moduleCount===46,'Baca katalog modul Admin',moduleResult.ok?moduleCount+' modul terlihat (target awal 46).':'HTTP '+moduleResult.status+', kode '+(moduleResult.code||'tidak ada'));
+  const renstraResult=await getRows(origin,key,token,'renstra_annual_targets','year',100);
+  const renstraCount=Array.isArray(renstraResult.rows)?renstraResult.rows.length:-1;
+  add(renstraResult.ok&&renstraCount===15,'Baca target Renstra 2025–2029',renstraResult.ok?renstraCount+' baris target tahunan terlihat (target awal 15).':'HTTP '+renstraResult.status+', kode '+(renstraResult.code||'tidak ada'));
+  const spj=await getRows(origin,key,token,'spj_packages','id',1);
+  add(!spj.ok,'Akses SPJ masih tertutup',spj.ok?'PERLU AUDIT: tabel SPJ dapat di-query (HTTP 200).':'Permintaan SPJ ditolak (HTTP '+spj.status+').');
+  setReport();
+ }catch(err){add(false,'Pengujian berhenti',redact(err.message||err));setReport();}finally{token='';$('run').disabled=false;$('run').textContent='Uji login dan hak baca'}
+});
+})();
+</script>
+</body>
+</html>
