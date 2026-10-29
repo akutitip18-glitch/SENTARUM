@@ -1,0 +1,38 @@
+{
+  "README_UTAMA.md": {
+    "bytes": 2382,
+    "sha256": "16ff5beea24ec3c5cd9bbea3494c1208269252ccf4817e23a43638b93472764b"
+  },
+  "PANDUAN_SEKALI_JALAN.md": {
+    "bytes": 5403,
+    "sha256": "ff224a60051ea1f3a0434fafe07c0222a3cea4fd106a1e498141d4c29b6de026"
+  },
+  "UAT_DAN_GO_NO_GO.md": {
+    "bytes": 2133,
+    "sha256": "cba6f6595c5bee916ded3cd47942050fb49aa18f97e88dc37c52e4f231103675"
+  },
+  "SENTARUM_015_016_EVIDENCE_RENSTRA_STAGING.sql": {
+    "bytes": 16067,
+    "sha256": "f4931d82035e8c9f149c65cfa6b904048eeebfb6046b0b198c2a69f9f0ab089c"
+  },
+  "index.html": {
+    "bytes": 1636649,
+    "sha256": "d806835a3c9b7361e2289d28bda445f2d89ee1576451e26539c3acf4f5bc255c"
+  },
+  "stage015_workspace.html": {
+    "bytes": 22271,
+    "sha256": "69087fd97dc599aa559be97650451d4ac491b14b27a497ead73483ee9c653ba5"
+  },
+  "PRATINJAU_PONSEL.png": {
+    "bytes": 61445,
+    "sha256": "ac3675f8c497ffebfea562089a34c97e8278e0fd63d84d2d88ae466ba5c0f2e5"
+  },
+  "PRATINJAU_DESKTOP.png": {
+    "bytes": 107912,
+    "sha256": "b8ece8a79283fbd32dcdca3ed6f09c61be5e339b1bc7edab98fd887e8c626ebd"
+  },
+  "test_ui_local.py": {
+    "bytes": 5571,
+    "sha256": "ebd4f5b974c6b3bc89ed4761014c5d70b0c5feba17e78e9e8141db641b2f6c2c"
+  }
+}

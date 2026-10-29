@@ -1,0 +1,128 @@
+<style>
+/* STAGING 015/016: panel kerja server, terpisah dari formulir prototipe lokal */
+#s15Layer[hidden]{display:none!important}#s15Layer{position:fixed;inset:0;z-index:2400000;display:flex;align-items:flex-start;justify-content:center;background:#0b2237d9;padding:12px;overflow:auto}
+#s15Root{box-sizing:border-box;width:min(1100px,100%);background:#fff;color:#19374b;margin:12px auto;border-radius:16px;overflow:hidden;box-shadow:0 20px 55px #001a325c;font:14px/1.5 system-ui,-apple-system,sans-serif}
+#s15Root *{box-sizing:border-box}#s15Root header{background:#0d5d5a;color:#fff;padding:17px 20px;display:flex;justify-content:space-between;gap:12px;align-items:center}#s15Root h2{color:white;font:750 20px/1.25 system-ui;margin:0}
+#s15Root button{border-radius:9px;cursor:pointer;border:1px solid #85b4ac;background:#f6fffb;color:#116359;padding:10px 12px;font:650 13px/1.35 system-ui}#s15Root button.primary{background:#087669;color:#fff;border-color:#087669}#s15Root button:disabled{opacity:.55;cursor:not-allowed}
+#s15Root .dismiss{color:#fff;background:transparent;border:1px solid #b5dfd7}#s15Root .body{padding:18px}#s15Root .tabs{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}#s15Root .tabs button.selected{color:#fff;background:#124e70;border-color:#124e70}
+#s15Root section[hidden]{display:none!important}#s15Root .s15-layout{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:15px}#s15Root .s15-card{border:1px solid #d4e3ea;border-radius:12px;padding:15px;margin:12px 0;min-width:0}
+#s15Root label{display:block;font-weight:700;font-size:12px;margin:8px 0 4px}#s15Root input,#s15Root textarea,#s15Root select{display:block;max-width:100%;width:100%;border:1px solid #bdced9;border-radius:9px;background:#fff;color:#133248;padding:10px;font:14px/1.4 system-ui}#s15Root textarea{min-height:78px;resize:vertical}
+#s15Root .muted{font-size:12px;color:#596e80}#s15Root .notice{background:#eef5fa;color:#25475f;padding:12px 13px;border-radius:10px;margin:10px 0}#s15Root .success{background:#e5f6eb;color:#0a5d3d}#s15Root .error{background:#fff1ea;color:#912f22}#s15Root .actions{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin:12px 0}
+#s15Root .item{padding:12px;border:1px solid #e0e9ed;border-radius:9px;margin:8px 0;overflow-wrap:anywhere}#s15Root .tag{font-size:11px;color:#345b75;background:#e9f2f7;padding:3px 7px;border-radius:999px;display:inline-block}#s15Root .kpis{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px}#s15Root .kpi{background:#eef4f6;border-radius:10px;padding:12px}#s15Root .kpi b{display:block;font-size:21px}
+@media(max-width:700px){#s15Layer{padding:0}#s15Root{margin:0;min-height:100vh;border-radius:0}#s15Root .body{padding:12px}#s15Root header{padding:13px}#s15Root .s15-layout{grid-template-columns:1fr}#s15Root .tabs button{flex:1 1 130px}.s12-table{min-width:0!important;width:100%!important}.s12-table thead{display:none}.s12-table tbody tr{display:block;border:1px solid #dce5ee;border-radius:10px;margin:10px;padding:10px}.s12-table tbody td{display:block;overflow-wrap:anywhere;border:0!important;white-space:normal!important;padding:6px!important}.s12-table tbody td:before{font-weight:700;color:#476376;font-size:11px;display:block}.s12-table tbody td:nth-child(1):before{content:'Indikator'}.s12-table tbody td:nth-child(2):before{content:'Satuan'}.s12-table tbody td:nth-child(3):before{content:'Target'}.s12-table tbody td:nth-child(4):before{content:'Realisasi terverifikasi'}.s12-table tbody td:nth-child(5):before{content:'Status'} }
+</style>
+<div id="s15Layer" hidden role="dialog" aria-modal="true" aria-label="Pusat Kerja Supabase SENTARUM">
+<div id="s15Root">
+<header><div><h2>☁ Pusat Kerja SENTARUM</h2><div style="font-size:12px;color:#d2f3e8">KANDIDAT TERPADU · STAGING 015/016 · Belum produksi</div></div><button class="dismiss" id="s15Close" type="button">Tutup</button></header>
+<div class="body">
+<div id="s15Status" class="notice" role="status" aria-live="polite">Login Administrator melalui ☁ Renstra Supabase dahulu.</div>
+<div class="notice"><strong>Sumber data jelas:</strong> Pusat Kerja, ☁ Data Server, dan ☁ Perjalanan Server membaca/menulis ke Supabase Staging. <strong>Formulir prototipe lama di belakangnya masih lokal.</strong> Jangan memasukkan data resmi sebelum migrasi dan pengujian produksi disahkan.</div>
+<div class="actions"><button id="s15Generic">Kelola modul umum</button><button id="s15Travel">Perjalanan &amp; SPJ individu</button><button id="s15Refresh">↻ Muat data server</button></div>
+<div class="tabs"><button data-s15tab="evidence" class="selected">Evidence privat</button><button data-s15tab="renstra">Capaian Renstra</button><button data-s15tab="readiness">Checklist perjalanan</button><button data-s15tab="release">Kesiapan produksi</button></div>
+<section id="s15TabEvidence">
+ <div class="s15-layout">
+ <div class="s15-card"><h3 style="margin-top:0">Unggah bukti privat</h3><p class="muted">Pilih file sekali. Sistem otomatis membuat register dokumen, menyimpan berkas privat, dan menautkan bukti jika Anda memilih perjalanan.</p>
+  <label for="s15Title">Judul dokumen</label><input id="s15Title" placeholder="Mis. Laporan hasil konsultasi" maxlength="180">
+  <label for="s15Kind">Jenis dokumen</label><select id="s15Kind"><option>SPT</option><option>SPPD</option><option>SPJ</option><option>Laporan</option><option>Bukti transportasi</option><option>Bukti kehadiran</option><option>Dokumen pendukung</option></select>
+  <label for="s15Class">Klasifikasi dokumen</label><select id="s15Class"><option value="restricted">Terbatas</option><option value="internal">Internal</option></select>
+  <label for="s15File">Berkas (PDF/JPG/PNG/WebP, maksimal 10 MB)</label><input id="s15File" type="file" accept=".pdf,.jpg,.jpeg,.png,.webp,application/pdf,image/jpeg,image/png,image/webp">
+  <label for="s15TripForEv">Tautkan ke perjalanan (opsional)</label><select id="s15TripForEv"><option value="">— Hanya simpan di daftar dokumen —</option></select>
+  <label for="s15EvScope">Cakupan evidence</label><select id="s15EvScope"><option value="Register">Register perjalanan</option><option value="SPJ">SPJ peserta tertentu</option></select>
+  <label for="s15SpjForEv">SPJ individual (jika cakupan SPJ)</label><select id="s15SpjForEv"><option value="">— Pilih SPJ individu —</option></select>
+  <div class="actions"><button id="s15Upload" class="primary">Unggah &amp; daftarkan</button></div>
+  <p class="muted">Unggah tidak berarti bukti sudah diverifikasi atau SPJ sudah dibayar. Tidak ada izin hapus permanen.</p>
+ </div>
+ <div class="s15-card"><h3 style="margin-top:0">Arsip evidence dari server</h3><div id="s15Assets">Belum dimuat.</div></div>
+ </div>
+</section>
+<section id="s15TabRenstra" hidden>
+ <div class="s15-card"><div class="actions"><div style="flex:1"><label for="s15Year">Tahun Renstra</label><select id="s15Year"><option>2025</option><option selected>2026</option><option>2027</option><option>2028</option><option>2029</option></select></div></div><div id="s15Targets">Belum dimuat.</div>
+ <p class="muted">Target bersumber dari Rancangan Akhir Renstra. Nilai usulan tidak otomatis menjadi realisasi terverifikasi. Keputusan verifikasi dilakukan petugas berwenang.</p></div>
+ <div class="s15-card"><h3>Usulkan realisasi yang didukung bukti</h3><div class="s15-layout">
+ <div><label for="s15TargetPick">Indikator/tahun</label><select id="s15TargetPick"></select></div>
+ <div><label for="s15Actual">Nilai usulan</label><input id="s15Actual" type="number" step="0.0001" min="0" placeholder="Sesuai hasil pengukuran"></div>
+ <div><label for="s15EvidencePick">Dokumen evidence privat</label><select id="s15EvidencePick"></select></div>
+ </div><div class="actions"><button id="s15SubmitActual" class="primary">Catat usulan untuk verifikasi</button></div></div>
+ <div class="s15-card"><h3>Hubungkan pekerjaan ke target Renstra</h3>
+  <div class="s15-layout"><div><label for="s15ContributionRecord">Kegiatan/agenda sumber</label><select id="s15ContributionRecord"></select></div><div><label for="s15Explanation">Penjelasan kontribusi</label><textarea id="s15Explanation" placeholder="Bagaimana kegiatan ini mendukung indikator? (belum berarti sudah meningkatkan nilainya)"></textarea></div></div>
+  <div class="actions"><button id="s15Link" class="primary">Tautkan sebagai usulan kontribusi</button></div>
+ </div>
+</section>
+<section id="s15TabReadiness" hidden><div class="s15-card"><h3>Daftar periksa otomatis perjalanan</h3><p class="muted">Dihitung dari register, peserta, SPJ individu, bukti, dan tindak lanjut. Pemeriksaan ini membantu petugas; bukan persetujuan penutupan resmi.</p>
+ <label for="s15ReadinessTrip">Pilih perjalanan</label><select id="s15ReadinessTrip"></select><div class="actions"><button id="s15Check" class="primary">Periksa kelengkapan</button></div><div id="s15CheckResult"></div></div></section>
+<section id="s15TabRelease" hidden><div class="s15-card"><h3>Gerbang menuju produksi</h3>
+ <div class="kpis"><div class="kpi"><b>46</b>Modul katalog awal</div><div class="kpi"><b>2025–29</b>Periode Renstra</div><div class="kpi"><b>1:1</b>SPJ tiap peserta</div></div>
+ <div class="item"><strong>Sudah disiapkan</strong><div class="muted">Login Admin, register umum berbasis server, Perjalanan/SPJ individual melalui RPC, evidence privat, usulan capaian Renstra dan checklist read-only.</div></div>
+ <div class="item"><strong>Belum dinyatakan lulus</strong><div class="muted">Pengujian SQL 015/016 pada server, unggah/unduh file privat nyata, migrasi arsip historis, hak akses Operator lintas unit, validasi hukum bukti, backup–restore, keamanan akun utama, UAT pegawai, dan pemisahan database produksi.</div></div>
+ <p class="notice">Status resmi: <strong>STAGING / NO-GO untuk data resmi dan produksi</strong>. Tombol deploy otomatis tidak disediakan untuk mencegah perubahan tanpa pengujian.</p></div></section>
+</div></div></div>
+<script>
+(()=>{'use strict';
+const ROOT='https://twwadofupxcupmjzdbgj.supabase.co';
+const KEY='sb_publishable_9jlv_4EBKclG0evCSbWl8A_qPo1Trdw';
+const BUCKET='sentarum-evidence-staging';
+const $=id=>document.getElementById(id), txt=(v)=>String(v??'');
+const uuid=()=>window.crypto?.randomUUID?.();
+const token=()=>window.__SENTARUM_STAGE12_AUTH__?.token?.()||'';
+let org=null,units=[],documents=[],assets=[],trips=[],spjs=[],targets=[],indicators=[],records=[],busy=false;
+function tell(m,level=''){const e=$('s15Status');e.textContent=m;e.className='notice '+(level==='bad'?'error':level==='good'?'success':'');}
+function div(cls,s){const e=document.createElement('div');e.className=cls;e.textContent=s;return e;}
+function optionize(id,rows,label,placeholder,selected){const s=$(id);s.replaceChildren(new Option(placeholder,''));for(const r of rows)s.add(new Option(label(r),r.id));if(selected)s.value=selected;}
+async function request(path,opts={}){const jwt=token();if(!jwt)throw Error('Sesi Admin belum ada. Masuk melalui ☁ Renstra Supabase.');const ac=new AbortController(),timer=setTimeout(()=>ac.abort(),30000);try{const response=await fetch(ROOT+path,{...opts,headers:{apikey:KEY,Authorization:'Bearer '+jwt,Accept:'application/json',...(opts.headers||{})},cache:'no-store',credentials:'omit',signal:ac.signal});const body=await response.text();let data;try{data=body?JSON.parse(body):null;}catch{data=body;}if(!response.ok)throw Error('HTTP '+response.status+': '+txt(data?.message||data?.error||body).slice(0,220));return data;}finally{clearTimeout(timer);}}
+function rpc(fn,args){return request('/rest/v1/rpc/'+fn,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(args)});}
+function pathEncode(p){return p.split('/').map(encodeURIComponent).join('/');}
+async function load(){if(!token()){window.s12Open?.();tell('Login Admin terlebih dahulu.','bad');return;}tell('Mengambil data dari Supabase Staging…');try{
+ const [o,u,rec,t,s,tar,ind,as]=await Promise.all([
+ request('/rest/v1/organizations?select=id,code,name&code=eq.SETWAN_KAPUAS_HULU&limit=1'),
+ request('/rest/v1/org_units?select=id,code,org_id,active&active=eq.true&limit=50'),
+ request('/rest/v1/business_records?select=id,module_key,display_title,state,unit_id&state=eq.active&limit=1000'),
+ request('/rest/v1/travel_registers?select=id,purpose,kind,status,org_id&limit=250'),
+ request('/rest/v1/spj_packages?select=id,travel_id,participant_id,reference_number&limit=250'),
+ request('/rest/v1/renstra_annual_targets?select=id,indicator_id,year,target_numeric,actual_numeric,actual_status&order=year.asc&limit=100'),
+ request('/rest/v1/renstra_indicators?select=id,code,name,unit&limit=100'),
+ request('/rest/v1/document_assets?select=id,record_id,storage_bucket,storage_path,filename,classification,uploaded_at&order=uploaded_at.desc&limit=60')]);
+ if(o.length!==1)throw Error('Organisasi induk tidak ditemukan');org=o[0];units=u.filter(x=>x.org_id===org.id);records=rec;trips=t.filter(x=>x.org_id===org.id);spjs=s;targets=tar;indicators=ind;assets=as;documents=records.filter(x=>x.module_key==='dokumen');
+ optionize('s15TripForEv',trips,x=>x.purpose||x.id,'— Tidak perlu menautkan perjalanan —');optionize('s15ReadinessTrip',trips,x=>x.purpose||x.id,'— Pilih perjalanan —');updateSpjOptions();
+ optionize('s15EvidencePick',assets.map(x=>({id:x.record_id,filename:x.filename})).filter((x,i,a)=>a.findIndex(z=>z.id===x.id)===i),x=>x.filename,'— Pilih bukti berkas nyata —');
+ optionize('s15ContributionRecord',records.filter(x=>!['spj','peserta_perjadin','dokumen'].includes(x.module_key)),x=>x.display_title+' · '+x.module_key,'— Pilih kegiatan sumber —');
+ renderAssets();renderTargets();tell(`Tersambung: ${trips.length} perjalanan, ${assets.length} berkas privat, ${targets.length} target Renstra dari server.`,'good');
+ }catch(e){tell('Gagal membaca data: '+txt(e.message),'bad');}}
+function updateSpjOptions(){const t=$('s15TripForEv').value;optionize('s15SpjForEv',spjs.filter(x=>!t||x.travel_id===t),x=>x.reference_number||('SPJ Individu '+x.id.slice(0,8)),'— Pilih SPJ individual —');}
+function renderAssets(){const h=$('s15Assets');h.replaceChildren();if(!assets.length){h.append(div('muted','Belum ada berkas privat terdaftar.'));return;}for(const x of assets){const c=div('item','');const label=document.createElement('strong');label.textContent=x.filename;c.append(label,div('muted',x.classification+' · '+txt(x.uploaded_at).slice(0,10)));const b=document.createElement('button');b.textContent='Buka privat (tautan 60 detik)';b.onclick=()=>signedUrl(x);c.append(b);h.append(c);}}
+async function signedUrl(asset){let tab=null;try{tab=window.open('about:blank','_blank');if(tab)tab.opener=null;const p='/storage/v1/object/sign/'+encodeURIComponent(asset.storage_bucket)+'/'+pathEncode(asset.storage_path);const d=await request(p,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({expiresIn:60})});const url=d?.signedURL||d?.signedUrl;if(!url)throw Error('Signed URL tidak dikembalikan');const full=url.startsWith('http')?url:ROOT+'/storage/v1'+(url.startsWith('/')?'':'/')+url;if(tab){tab.location.replace(full);tell('Berkas dibuka di tab baru menggunakan tautan privat 60 detik.','good');}else{tell('Tautan privat 60 detik siap. Ketuk tautan berikut.','good');const a=document.createElement('a');a.href=full;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Buka dokumen privat';$('s15Status').append(document.createTextNode(' '),a);}}catch(e){if(tab)tab.close();tell('Gagal membuka berkas: '+e.message,'bad');}}
+async function upload(){if(busy)return;if(!org)return tell('Muat data server dahulu.','bad');const f=$('s15File').files[0],title=$('s15Title').value.trim(),kind=$('s15Kind').value;
+ if(!f||!title)return tell('Masukkan judul dan pilih file.','bad');const allowed={'application/pdf':'pdf','image/jpeg':'jpg','image/png':'png','image/webp':'webp'};
+ const ext=allowed[f.type];if(!ext||f.size<1||f.size>10485760)return tell('Pilih PDF/JPG/PNG/WebP maksimal 10 MB.','bad');
+ const unit=units.find(x=>x.code==='TUKEP');if(!unit)return tell('Unit TUKEP tidak ditemukan.','bad');
+ if($('s15TripForEv').value && $('s15EvScope').value==='SPJ' && !$('s15SpjForEv').value)return tell('Pilih SPJ individual yang akan ditautkan.','bad');
+ const id=uuid(),fileId=uuid();if(!id||!fileId||!window.crypto.subtle)return tell('Browser tidak mendukung UUID / SHA-256 aman.','bad');
+ busy=true;$('s15Upload').disabled=true;let created=false,fileDone=false;const path=org.id+'/'+id+'/'+fileId+'.'+ext;
+ try{tell('Mendaftarkan metadata dokumen…');await rpc('sentarum_save_generic',{
+  p_id:id,p_org_id:org.id,p_unit_id:unit.id,p_module_key:'dokumen',p_title:title,
+  p_payload:{id,judul:title,jenis:kind,tanggal:new Date().toISOString().slice(0,10),status:'Tercatat',catatan:'Bukti terdaftar di Evidence Center; belum diverifikasi'},
+  p_state:'active',p_expected_revision:null,p_relations:[]});created=true;
+  tell('Mengunggah file ke bucket privat…');
+  const digest=await crypto.subtle.digest('SHA-256',await f.arrayBuffer());const sha=[...new Uint8Array(digest)].map(x=>x.toString(16).padStart(2,'0')).join('');
+  await request('/storage/v1/object/'+BUCKET+'/'+pathEncode(path),{method:'POST',headers:{'Content-Type':f.type,'x-upsert':'false'},body:f});fileDone=true;
+  tell('Mencatat checksum dan referensi file…');await rpc('sentarum_attach_private_file',{
+    p_org_id:org.id,p_document_record_id:id,p_path:path,p_filename:f.name,p_classification:$('s15Class').value,p_sha256:sha});
+  const tripId=$('s15TripForEv').value;
+  if(tripId){await rpc('sentarum_modelb_command',{p_org_id:org.id,p_command:'evidence_link',p_data:{travel_id:tripId,scope:$('s15EvScope').value,spj_id:$('s15EvScope').value==='SPJ'?$('s15SpjForEv').value:null,document_record_id:id,evidence_kind:kind}});}
+  $('s15Title').value='';$('s15File').value='';await load();tell('Berhasil: dokumen privat diunggah dan didaftarkan'+(tripId?' serta ditautkan ke perjalanan.':'.')+' Bukti belum terverifikasi.','good');
+ }catch(e){let note=created?' Metadata dokumen sudah terbentuk di server.':'';if(fileDone)note+=' File mungkin tersimpan tanpa tautan; catat untuk rekonsiliasi Admin.';tell('Tahap unggah gagal: '+txt(e.message)+note,'bad');}finally{busy=false;$('s15Upload').disabled=false;}}
+function renderTargets(){const year=Number($('s15Year').value);const data=targets.filter(x=>Number(x.year)===year),host=$('s15Targets');host.replaceChildren();if(!data.length)host.append(div('muted','Tidak ada target tahun ini.'));
+ for(const t of data){const i=indicators.find(x=>x.id===t.indicator_id),label=i?.name||t.indicator_id,c=div('item','');const title=document.createElement('strong');title.textContent=label;c.append(title);const state=txt(t.actual_status).replaceAll('_',' ');
+ c.append(div('muted',`Target ${Number(t.target_numeric).toLocaleString('id-ID')} ${i?.unit||''} · ${t.actual_numeric===null?'Realisasi belum dicatat':'Usulan/aktual '+Number(t.actual_numeric).toLocaleString('id-ID')} · ${state}`));host.append(c);}
+ optionize('s15TargetPick',data,x=>indicators.find(i=>i.id===x.indicator_id)?.name||x.id,'— Pilih indikator —');}
+async function proposeActual(){if(busy)return;const id=$('s15TargetPick').value,value=$('s15Actual').value,evidence=$('s15EvidencePick').value;if(!id||!value||!evidence)return tell('Pilih target, nilai, dan berkas evidence yang telah diunggah.','bad');
+ try{busy=true;await rpc('sentarum_renstra_propose_actual',{p_org_id:org.id,p_target_id:id,p_actual:Number(value),p_evidence_record_id:evidence});await load();tell('Usulan realisasi tercatat untuk verifikasi. Belum dinyatakan capaian terverifikasi.','good');}catch(e){tell('Gagal usulan realisasi: '+e.message,'bad');}finally{busy=false;}}
+async function contribution(){if(busy)return;const target=$('s15TargetPick').value,rec=$('s15ContributionRecord').value,why=$('s15Explanation').value.trim();if(!target||!rec||why.length<5)return tell('Pilih target, kegiatan, dan jelaskan kontribusinya.','bad');
+ try{busy=true;await rpc('sentarum_renstra_link_contribution',{p_org_id:org.id,p_target_id:target,p_record_id:rec,p_explanation:why});$('s15Explanation').value='';tell('Kegiatan ditautkan sebagai usulan kontribusi, bukan capaian otomatis.','good');}catch(e){tell('Gagal menautkan kontribusi: '+e.message,'bad');}finally{busy=false;}}
+async function readiness(){const id=$('s15ReadinessTrip').value;if(!id||!org)return tell('Pilih perjalanan.','bad');try{const a=await rpc('sentarum_travel_readiness',{p_org_id:org.id,p_travel_id:id});const host=$('s15CheckResult');host.replaceChildren();const entries=[['Status','Perlu telaah administratif'],['Pelaksanaan',a.pelaksanaan],['Peserta aktif',a.peserta_aktif],['SPJ individual tercatat',a.spj_tercatat],['Peserta tanpa SPJ',a.peserta_tanpa_spj],['SPJ tanpa rincian',a.spj_tanpa_rincian],['Evidence terdaftar',a.evidence_tercatat],['Tindak lanjut terbuka',a.tindak_lanjut_terbuka]];for(const [k,v] of entries)host.append(div('item',k+': '+v));host.append(div('notice',a.catatan||'Perlu pemeriksaan manusia.'));tell('Checklist dibaca dari server. Tidak ada penutupan otomatis.','good');}catch(e){tell('Gagal pemeriksaan: '+e.message,'bad');}}
+function tab(v){for(const b of document.querySelectorAll('[data-s15tab]'))b.classList.toggle('selected',b.dataset.s15tab===v);for(const s of ['evidence','renstra','readiness','release'])$('s15Tab'+s[0].toUpperCase()+s.slice(1)).hidden=s!==v;}
+window.s15Open=async()=>{if(!token()){$('s15Layer').hidden=true;window.s12Open?.();tell('Login Admin melalui ☁ Renstra Supabase dahulu.');return;}$('s15Layer').hidden=false;await load();};
+$('s15Close').onclick=()=>$('s15Layer').hidden=true;$('s15Layer').addEventListener('click',e=>{if(e.target===$('s15Layer'))$('s15Layer').hidden=true;});document.querySelectorAll('[data-s15tab]').forEach(b=>b.onclick=()=>tab(b.dataset.s15tab));
+$('s15Refresh').onclick=load;$('s15Generic').onclick=()=>{ $('s15Layer').hidden=true;window.s13Open?.();};$('s15Travel').onclick=()=>{$('s15Layer').hidden=true;window.s14Open?.();};
+$('s15TripForEv').onchange=updateSpjOptions;$('s15Year').onchange=renderTargets;$('s15Upload').onclick=upload;$('s15SubmitActual').onclick=proposeActual;$('s15Link').onclick=contribution;$('s15Check').onclick=readiness;
+})();
+</script>
