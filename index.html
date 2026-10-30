@@ -3873,9 +3873,16 @@ function renderEditor(){const host=$('s13Editor'),head=$('s13EditorHead');host.r
  const core=fields().filter(f=>f.type!=='hidden');const priorit=['judul','nama','nomor','kode','uraian','jenis','tahun','tanggal','mulai','akhir','status'];core.sort((a,b)=>{const ai=priorit.indexOf(a.key),bi=priorit.indexOf(b.key);return(ai<0?100:ai)-(bi<0?100:bi);});
  const shown=core.slice(0,5),extras=core.slice(5);const grid=node('div',{class:'s13-fields'});shown.forEach(f=>grid.append(inputFor(f,values[f.key])));host.append(grid);
  if(extras.length){const more=node('details');more.append(node('summary',{},`Isian lanjutan (${extras.length}) — buka bila diperlukan`));const other=node('div',{class:'s13-fields',style:'margin-top:10px'});extras.forEach(f=>other.append(inputFor(f,values[f.key])));more.append(other);host.append(more);}
- const act=node('div',{class:'s13-actions'});const draft=node('button',{type:'button'},'Simpan draf ke server');draft.onclick=()=>save('draft');act.append(draft);
- const active=node('button',{type:'button',class:'primary'},'Simpan sebagai register aktif');active.onclick=()=>save('active');act.append(active);
- if(chosen){const archive=node('button',{type:'button'},'Arsipkan');archive.onclick=()=>{if(confirm('Arsipkan catatan ini? Jejaknya tetap tersimpan di server.'))save('archived');};act.append(archive);}
+ const act=node('div',{class:'s13-actions'});const draft=node('button',{type:'button'},'Simpan draf ke server');draft.onclick=()=>save('draft');if(chosen?.state==='archived')draft.disabled=true;act.append(draft);
+ const active=node('button',{type:'button',class:'primary'},'Simpan sebagai register aktif');active.onclick=()=>save('active');if(chosen?.state==='archived')active.disabled=true;act.append(active);
+ if(chosen?.state==='draft'){
+  const archive=node('button',{type:'button'},'Batalkan draf salah input');
+  archive.onclick=archiveWrongDraft;act.append(archive);
+ } else if(chosen?.state==='active'){
+  act.append(node('small',{class:'s13-sub'},'Data aktif: gunakan Edit untuk memperbaiki. Penghapusan setelah dipakai proses bisnis memerlukan pemeriksaan relasi.'));
+ } else if(chosen?.state==='archived'){
+  act.append(node('small',{class:'s13-sub'},'Data sudah diarsipkan. Riwayatnya dipertahankan.'));
+ }
  host.append(act);host.append(node('p',{class:'s13-sub'},'Berkas/dokumen dan verifikasi resmi tidak otomatis disahkan oleh tindakan ini.'));
 }
 function valuesNow(){const values={...(chosen?.payload||{})};const links=[];for(const inp of $('s13Editor').querySelectorAll('[data-server-field]')){const key=inp.dataset.serverField;values[key]=inp.value.trim();if(inp.dataset.relation&&inp.value)links.push({field:key,target_id:inp.value});}return {values,links};}
@@ -3888,6 +3895,19 @@ async function save(state){if(busy)return;let id=chosen?.id||toUid();if(!id)retu
  if(!Array.isArray(data)||data.length!==1)throw Error('Hasil simpan tidak sesuai format RPC; periksa server.');
  chosen=null;await loadList(id);status('Berhasil: '+mod+' '+state+' disimpan di Supabase · revisi '+data[0].new_revision,'good');
  }catch(e){status('Gagal menyimpan: '+String(e.message).slice(0,300),'bad');}finally{busy=false;}}
+async function archiveWrongDraft(){
+ if(!chosen||chosen.state!=='draft'||busy)return;
+ const reason=window.prompt('Mengapa draf ini dibatalkan? (minimal 8 karakter)');
+ if(reason===null)return;
+ if(reason.trim().length<8)return status('Tuliskan alasan minimal 8 karakter.','bad');
+ if(!window.confirm('Batalkan DRAF ini? Riwayat tetap tersimpan dan tidak terhapus permanen.'))return;
+ try{busy=true;status('Memeriksa relasi dan membatalkan draf di server…');
+  await api('/rest/v1/rpc/sentarum_archive_wrong_draft',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({p_org_id:organization.id,p_record_id:chosen.id,p_expected_revision:chosen.revision,p_reason:reason.trim()})});
+  chosen=null;await loadList();status('Draf salah input telah dibatalkan, dengan alasan dan jejak audit.','good');
+ }catch(e){status('Draf belum dibatalkan: '+String(e.message).slice(0,280),'bad');}
+ finally{busy=false;}
+}
 function drawList(){const host=$('s13List');host.replaceChildren();if(!list.length){host.append(node('p',{class:'s13-sub'},'Belum ada catatan server di modul ini. Klik Tambah draf.'));return;}
 for(const x of list){const b=node('button',{class:'s13-record'+(chosen?.id===x.id?' active':'')});b.append(node('span',{},x.display_title));b.append(node('small',{},`${x.state} · Revisi ${x.revision} · ${String(x.updated_at||'').slice(0,10)}`));b.onclick=()=>{chosen=x;drawList();renderEditor();};host.append(b);}}
 async function loadList(openId){const mod=mdl();if(!mod)return;try{status('Memuat '+mod+' dari server…');const p='/rest/v1/business_records?select=id,module_key,unit_id,display_title,payload,state,revision,updated_at&org_id=eq.'+encodeURIComponent(organization.id)+'&module_key=eq.'+encodeURIComponent(mod)+'&order=updated_at.desc&limit=100';list=await api(p);if(!Array.isArray(list))throw Error('Data bukan daftar');chosen=list.find(x=>x.id===openId)||null;drawList();renderEditor();status('Memuat '+list.length+' catatan '+mod+' dari Supabase Staging.','good');}catch(e){status('Gagal membaca: '+e.message,'bad');}}
@@ -4044,13 +4064,17 @@ window.s14Open=async()=>{$('s14Layer').hidden=false;if(!token()){window.s12Open?
 </style>
 <div id="s15Layer" hidden role="dialog" aria-modal="true" aria-label="Pusat Kerja Supabase SENTARUM">
 <div id="s15Root">
-<header><div><h2>☁ Pusat Kerja SENTARUM</h2><div style="font-size:12px;color:#d2f3e8">KANDIDAT TERPADU · STAGING 019 · Perbaikan Evidence · Belum produksi</div></div><button class="dismiss" id="s15Close" type="button">Tutup</button></header>
+<header><div><h2>☁ Pusat Kerja SENTARUM</h2><div style="font-size:12px;color:#d2f3e8">KANDIDAT TERPADU · STAGING 020.1 · Navigasi Pembersihan Uji · Belum produksi</div></div><button class="dismiss" id="s15Close" type="button">Tutup</button></header>
 <div class="body">
 <div id="s15Status" class="notice" role="status" aria-live="polite">Login Administrator melalui ☁ Renstra Supabase dahulu.</div>
 <div class="notice"><strong>Sumber data jelas:</strong> Pusat Kerja, ☁ Data Server, dan ☁ Perjalanan Server membaca/menulis ke Supabase Staging. <strong>Formulir prototipe lama di belakangnya masih lokal.</strong> Jangan memasukkan data resmi sebelum migrasi dan pengujian produksi disahkan.</div>
 <div class="actions"><button id="s15Generic">Kelola modul umum</button><button id="s15Travel">Perjalanan &amp; SPJ individu</button><button id="s15Refresh">↻ Muat data server</button></div>
 <div class="tabs"><button data-s15tab="evidence" class="selected">Evidence privat</button><button data-s15tab="renstra">Capaian Renstra</button><button data-s15tab="readiness">Checklist perjalanan</button><button data-s15tab="release">Kesiapan produksi</button></div>
 <section id="s15TabEvidence">
+ <div class="actions" style="justify-content:flex-start;margin:4px 0 14px">
+  <button id="s20JumpToCleanup" type="button" style="border-color:#87b4a8;background:#e7f5f0;color:#135e50">⚙ Perbaiki salah input / Bersihkan Evidence uji</button>
+  <span class="muted">Khusus Admin di staging · Tidak langsung menghapus data</span>
+ </div>
  <div class="s15-layout">
  <div class="s15-card"><h3 style="margin-top:0">Unggah bukti privat</h3><p class="muted">Pilih file sekali. Sistem otomatis membuat register dokumen, menyimpan berkas privat, dan menautkan bukti jika Anda memilih perjalanan.</p>
   <label for="s15Title">Judul dokumen</label><input id="s15Title" placeholder="Mis. Laporan hasil konsultasi" maxlength="180">
@@ -4070,6 +4094,14 @@ window.s14Open=async()=>{$('s14Layer').hidden=false;if(!token()){window.s12Open?
 <div id="s19RecoveryStatus" class="notice" role="status" aria-live="polite">SQL 019 harus berhasil dijalankan terlebih dahulu. Akses hanya untuk Admin di staging.</div>
 <div id="s19RecoveryList"></div>
 <p class="muted">Nama asli file yang tidak tersimpan pada register tidak dapat ditebak. Metadata hasil pemulihan diberi nama arsip teknis dan klasifikasi Terbatas. Bukti tidak otomatis disahkan atau dikaitkan ke SPJ.</p></div>
+ </div>
+ <div class="s15-card" id="s20CleanupPanel">
+  <h3 style="margin-top:0">Perbaiki salah input &amp; bersihkan Evidence uji</h3>
+  <p class="muted">Khusus <strong>staging</strong>. Sistem hanya menawarkan Evidence berjudul Tes/Test/Yes upload/UJI EVIDENCE yang belum dipakai oleh modul lain. Penghapusan fisik hanya terjadi setelah pemeriksaan server dan konfirmasi Anda.</p>
+  <div class="actions"><button id="s20Preview" type="button">Periksa data uji</button><button id="s20Cleanup" type="button" disabled class="primary">Bersihkan data uji terpilih</button></div>
+  <div id="s20Count" class="notice" role="status" aria-live="polite">Pemeriksaan SQL 020 harus terpasang sebelum fitur ini bisa dipakai.</div>
+  <div id="s20List"></div>
+  <p class="muted"><strong>Dokumen resmi tidak dihapus melalui fitur ini.</strong> Untuk salah input di modul umum, buka ☁ Data Server, pilih draf, lalu klik “Batalkan draf salah input” dan berikan alasan. Untuk data aktif/terverifikasi gunakan koreksi administratif.</p>
  </div>
 </section>
 <section id="s15TabRenstra" hidden>
@@ -4215,4 +4247,63 @@ $('s15TripForEv').onchange=updateSpjOptions;$('s15Year').onchange=renderTargets;
 })();
 </script>
 
+<script>
+// Tahap 020: pembersihan hanya data uji yang aman, melalui dua tahap server + Storage API.
+(()=>{'use strict';
+const ROOT='https://twwadofupxcupmjzdbgj.supabase.co';
+const KEY='sb_publishable_9jlv_4EBKclG0evCSbWl8A_qPo1Trdw';
+const BUCKET='sentarum-evidence-staging';
+const $=id=>document.getElementById(id);
+const token=()=>window.__SENTARUM_STAGE12_AUTH__?.token?.()||'';
+let org=null,rows=[],busy=false;
+async function api(path,options={}){
+ const jwt=token();if(!jwt)throw Error('Login Admin terlebih dahulu.');
+ const ac=new AbortController();const timer=setTimeout(()=>ac.abort(),30000);
+ try{const r=await fetch(ROOT+path,{...options,credentials:'omit',cache:'no-store',signal:ac.signal,headers:{apikey:KEY,Authorization:'Bearer '+jwt,Accept:'application/json',...(options.headers||{})}});
+ const body=await r.text();let data;try{data=body?JSON.parse(body):null;}catch{data=body;}
+ if(!r.ok)throw Error('HTTP '+r.status+': '+String(data?.message||data?.error||body).slice(0,180));return data;
+ }finally{clearTimeout(timer);}
+}
+const rpc=(name,args)=>api('/rest/v1/rpc/'+name,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(args)});
+const encodePath=p=>p.split('/').map(encodeURIComponent).join('/');
+function info(message,mode=''){const el=$('s20Count');el.textContent=message;el.className='notice'+(mode==='bad'?' error':mode==='good'?' success':'');}
+function draw(){const host=$('s20List');host.replaceChildren();for(const r of rows){const label=document.createElement('label');label.className='item';label.style.display='flex';label.style.gap='10px';label.style.alignItems='flex-start';
+ const cb=document.createElement('input');cb.type='checkbox';cb.style.width='auto';cb.style.margin='4px 0 0';cb.dataset.cleanupId=r.record_id;
+ const text=document.createElement('span');text.textContent=`${r.document_title} · ${(Number(r.file_size||0)/1024).toFixed(1)} KB · Evidence uji tanpa relasi bisnis`;label.append(cb,text);host.append(label);
+ }$('s20Cleanup').disabled=!rows.length;}
+async function preview(){if(busy)return;try{busy=true;$('s20Cleanup').disabled=true;info('Memeriksa hak Admin dan relasi dokumen…');
+ const data=await api('/rest/v1/organizations?select=id&code=eq.SETWAN_KAPUAS_HULU&limit=1');if(data.length!==1)throw Error('Organisasi tidak ditemukan');org=data[0];
+ rows=await rpc('sentarum_test_cleanup_candidates',{p_org_id:org.id});if(!Array.isArray(rows))throw Error('Hasil pemeriksaan tidak sesuai format');
+ draw();info(`${rows.length} Evidence uji tersedia untuk pembersihan. Centang dokumen yang benar-benar ingin dihapus.`, 'good');
+ }catch(e){rows=[];draw();info('Pemeriksaan gagal: '+e.message,'bad');}finally{busy=false;}}
+async function cleanup(){if(busy||!org)return;const selected=[...document.querySelectorAll('[data-cleanup-id]:checked')].map(e=>e.dataset.cleanupId);
+ if(!selected.length)return info('Centang setidaknya satu dokumen uji yang ingin dihapus.','bad');
+ const items=rows.filter(r=>selected.includes(r.record_id));
+ const answer=window.prompt(`Anda akan menghapus ${items.length} file UJI secara permanen dari Storage. Register akan DIARSIPKAN dengan jejak audit.\n\nKetik tepat: HAPUS ${items.length} DATA UJI`);
+ if(answer!==`HAPUS ${items.length} DATA UJI`)return info('Dibatalkan. Tidak ada data yang dihapus.');
+ const reason=window.prompt('Alasan pembersihan (minimal 8 karakter)','Pembersihan file simulasi pada staging setelah uji.');
+ if(reason===null||reason.trim().length<8)return info('Alasan pembersihan belum sesuai. Tidak ada file yang dihapus.','bad');
+ busy=true;$('s20Preview').disabled=true;$('s20Cleanup').disabled=true;let ok=0;const errors=[];
+ for(const row of items){let removed=false;
+ try{info(`Membersihkan ${ok+errors.length+1}/${items.length}: ${row.document_title}…`);
+  const job=await rpc('sentarum_prepare_test_evidence_delete',{p_org_id:org.id,p_record_id:row.record_id,p_reason:reason.trim()});
+  if(job.bucket!==BUCKET||job.path!==row.storage_path||job.record_id!==row.record_id)throw Error('Tiket pembersihan tidak cocok dengan pilihan');
+  await api('/storage/v1/object/'+encodeURIComponent(BUCKET)+'/'+encodePath(job.path),{method:'DELETE'});removed=true;
+  await rpc('sentarum_finalize_test_evidence_delete',{p_org_id:org.id,p_record_id:row.record_id});ok++;
+ }catch(e){
+  if(removed){try{await rpc('sentarum_finalize_test_evidence_delete',{p_org_id:org.id,p_record_id:row.record_id});ok++;continue;}catch(inner){errors.push(row.document_title+': file telah dihapus tetapi finalisasi belum selesai ('+inner.message+'). JANGAN unggah ulang; hubungi Admin.');}}
+  else errors.push(row.document_title+': '+e.message);
+ }
+ }
+ busy=false;$('s20Preview').disabled=false;info(`Selesai: ${ok} bersih, ${errors.length} perlu ditinjau. ${errors.join(' | ')}`,errors.length?'bad':'good');
+ try{await preview();window.s15Open?.();}catch(e){} // pembaruan aplikasi tidak mengubah hasil penghapusan server
+}
+$('s20JumpToCleanup')?.addEventListener('click',()=>{
+ const target=$('s20CleanupPanel');
+ if(target){target.scrollIntoView({behavior:'smooth',block:'start'});$('s20Preview')?.focus({preventScroll:true});}
+});
+$('s20Preview')?.addEventListener('click',preview);
+$('s20Cleanup')?.addEventListener('click',cleanup);
+})();
+</script>
 </body></html>
