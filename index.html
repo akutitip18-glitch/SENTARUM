@@ -2,7 +2,7 @@
 <html lang="id">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
-<title>SENTARUM v0.26.1 — Staging: UX-First + Renstra Supabase</title>
+<title>SENTARUM RC 0.28 — Staging</title>
 <meta name="description" content="SENTARUM: prototipe administrasi perencanaan, dokumen anggaran, verifikasi belanja, laporan keuangan, perjalanan dinas, SPJ dan layanan DPRD.">
 <style>
 :root{--navy:#13263f;--navy2:#1e3858;--ink:#192536;--muted:#69788c;--line:#dfe6ee;--bg:#f3f6fa;--card:#fff;--teal:#087f8c;--teal2:#e1f5f5;--gold:#c58a25;--red:#b33b45;--green:#21805c;--blue:#366ad3;--shadow:0 8px 24px rgba(18,38,63,.07);--radius:16px;--font:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
@@ -180,6 +180,34 @@
 .s12-meta{font-size:12px;color:#536b80;margin:12px 0}.s12-state{background:#f6f8fb;padding:4px 8px;border-radius:7px;font-size:11px;color:#546e87;white-space:nowrap}
 .s12-foot{padding:12px 27px;border-top:1px solid #e7edf2;color:#6c7d8b;font-size:11px}
 @media(max-width:650px){#s12Layer{padding:7px}.s12-panel{max-height:97vh}.s12-head,.s12-pad{padding:15px}.s12-head h2{font-size:17px}.s12-pills{grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.s12-pill{padding:10px}.s12-pill strong{font-size:19px}.s12-foot{padding:12px 15px}}
+</style>
+<script>
+// SENTARUM release config (publishable key saja; JANGAN pernah menyimpan secret/server key di HTML).
+window.SENTARUM_RELEASE_CONFIG = {
+  environment: "staging",
+  url: "https://twwadofupxcupmjzdbgj.supabase.co",
+  publishableKey: "sb_publishable_9jlv_4EBKclG0evCSbWl8A_qPo1Trdw",
+  enableLegacyDemo: true
+};
+</script>
+
+<style id="sentarum-release-css">
+  #sentarumReleaseGate{position:fixed;inset:0;z-index:3000000;overflow:auto;background:linear-gradient(145deg,#102b43,#134d55);font-family:system-ui,-apple-system,Segoe UI,sans-serif;color:#f5fffa;padding:clamp(16px,4vw,40px);box-sizing:border-box}
+  #sentarumReleaseGate[hidden]{display:none!important}
+  #sentarumReleaseGate .r-wrap{max-width:800px;margin:24px auto 40px}
+  #sentarumReleaseGate h1{font-size:clamp(25px,4vw,38px);line-height:1.15;margin:0 0 12px}
+  #sentarumReleaseGate p{line-height:1.6}
+  #sentarumReleaseGate .r-flag{font-size:12px;letter-spacing:.1em;display:inline-block;border:1px solid #9fc7be;border-radius:999px;padding:8px 12px;margin-bottom:20px}
+  #sentarumReleaseGate .r-actions{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin:24px 0}
+  #sentarumReleaseGate button{appearance:none;background:#fff;color:#18404a;border:1px solid #fff;border-radius:12px;padding:16px;font-weight:700;font-size:15px;text-align:left;cursor:pointer;line-height:1.4}
+  #sentarumReleaseGate button:focus-visible{outline:3px solid #f7cd7c;outline-offset:3px}
+  #sentarumReleaseGate button:disabled{opacity:.55;cursor:not-allowed}
+  #sentarumReleaseGate .r-note{border:1px solid #6a9a9b;border-radius:12px;padding:16px;background:rgba(255,255,255,.08);line-height:1.55}
+  #sentarumReleaseGate .r-demo{background:none;color:#d2e7e4;border:0;text-decoration:underline;padding:10px 0;font-size:13px;margin-top:18px}
+  #sentarumReleaseGate .r-alert{color:#fee9b5;font-weight:700}
+  @media(max-width:550px){#sentarumReleaseGate .r-actions{grid-template-columns:1fr}}
+  #sentarumLegacyWarning{position:fixed;z-index:2400001;bottom:0;left:0;right:0;background:#6c261e;color:white;text-align:center;padding:9px;font:700 13px system-ui}
+  #sentarumLegacyWarning[hidden]{display:none!important}
 </style>
 </head>
 <body>
@@ -3747,8 +3775,8 @@ window.__SENTARUM_UX_FIRST_TEST__={version:VERSION,readDrafts,draftStore,showGro
 </div></div>
 <script>
 (()=>{'use strict';
-const ROOT='https://twwadofupxcupmjzdbgj.supabase.co';
-const KEY='sb_publishable_9jlv_4EBKclG0evCSbWl8A_qPo1Trdw';
+const ROOT=window.SENTARUM_RELEASE_CONFIG.url;
+const KEY=window.SENTARUM_RELEASE_CONFIG.publishableKey;
 const el=id=>document.getElementById(id);
 let jwt='',memory={period:null,indicators:[],targets:[],modules:[]};
 const fmt=new Intl.NumberFormat('id-ID',{maximumFractionDigits:4});
@@ -3845,8 +3873,8 @@ window.__SENTARUM_STAGE12_AUTH__={token:()=>jwt};
 </div></section></div>
 <script>
 (()=>{'use strict';
-const ROOT='https://twwadofupxcupmjzdbgj.supabase.co';
-const KEY='sb_publishable_9jlv_4EBKclG0evCSbWl8A_qPo1Trdw';
+const ROOT=window.SENTARUM_RELEASE_CONFIG.url;
+const KEY=window.SENTARUM_RELEASE_CONFIG.publishableKey;
 const $=id=>document.getElementById(id);const BLOCK=new Set(['perjadin','peserta_perjadin','spj']);
 let organization=null,units=[],catalog=[],allRefs=[],list=[],chosen=null,formFields=[],busy=false;
 function token(){return window.__SENTARUM_STAGE12_AUTH__?.token?.()||'';}
@@ -3976,7 +4004,7 @@ $('s13Module').onchange=()=>{chosen=null;loadList();};$('s13Refresh').onclick=()
 </div>
 <script>
 (()=>{'use strict';
-const ROOT='https://twwadofupxcupmjzdbgj.supabase.co', KEY='sb_publishable_9jlv_4EBKclG0evCSbWl8A_qPo1Trdw';
+const ROOT=window.SENTARUM_RELEASE_CONFIG.url, KEY=window.SENTARUM_RELEASE_CONFIG.publishableKey;
 const $=id=>document.getElementById(id),V=id=>$(id)?.value||'';
 let org=null,trips=[],active=null,revision=null,agendas=[],people=[],docs=[],parts=[],spjs=[],costs=[],evs=[],follows=[],busy=false;
 const token=()=>window.__SENTARUM_STAGE12_AUTH__?.token?.()||'';
@@ -4127,8 +4155,8 @@ window.s14Open=async()=>{$('s14Layer').hidden=false;if(!token()){window.s12Open?
 </div></div></div>
 <script>
 (()=>{'use strict';
-const ROOT='https://twwadofupxcupmjzdbgj.supabase.co';
-const KEY='sb_publishable_9jlv_4EBKclG0evCSbWl8A_qPo1Trdw';
+const ROOT=window.SENTARUM_RELEASE_CONFIG.url;
+const KEY=window.SENTARUM_RELEASE_CONFIG.publishableKey;
 const BUCKET='sentarum-evidence-staging';
 const $=id=>document.getElementById(id), txt=(v)=>String(v??'');
 const uuid=()=>window.crypto?.randomUUID?.();
@@ -4250,8 +4278,8 @@ $('s15TripForEv').onchange=updateSpjOptions;$('s15Year').onchange=renderTargets;
 <script>
 // Tahap 020: pembersihan hanya data uji yang aman, melalui dua tahap server + Storage API.
 (()=>{'use strict';
-const ROOT='https://twwadofupxcupmjzdbgj.supabase.co';
-const KEY='sb_publishable_9jlv_4EBKclG0evCSbWl8A_qPo1Trdw';
+const ROOT=window.SENTARUM_RELEASE_CONFIG.url;
+const KEY=window.SENTARUM_RELEASE_CONFIG.publishableKey;
 const BUCKET='sentarum-evidence-staging';
 const $=id=>document.getElementById(id);
 const token=()=>window.__SENTARUM_STAGE12_AUTH__?.token?.()||'';
@@ -4304,6 +4332,62 @@ $('s20JumpToCleanup')?.addEventListener('click',()=>{
 });
 $('s20Preview')?.addEventListener('click',preview);
 $('s20Cleanup')?.addEventListener('click',cleanup);
+})();
+</script>
+
+<div id="sentarumReleaseGate" role="region" aria-label="Pintu masuk SENTARUM server">
+ <div class="r-wrap">
+  <span class="r-flag" id="releaseFlag">SENTARUM · KANDIDAT RILIS</span>
+  <h1>SENTARUM — Pusat Kerja Server</h1>
+  <p id="releaseText">Gunakan jalur kerja yang tersimpan di Supabase, bukan formulir lokal lama. Target utama: mendukung Renstra 2025–2029 dan SPJ per individu.</p>
+  <div class="r-actions">
+   <button type="button" data-release-open="s12">Masuk Admin & lihat target Renstra</button>
+   <button type="button" data-release-open="s15">Pusat Kerja · Evidence & capaian</button>
+   <button type="button" data-release-open="s13">Register umum · Data Server</button>
+   <button type="button" data-release-open="s14">Perjalanan dinas & SPJ individu</button>
+  </div>
+  <div class="r-note" id="releaseNotice">Aplikasi ini masih kandidat. Data berstatus draf atau usulan bukan persetujuan administratif. Dokumen dan realisasi harus diverifikasi oleh petugas berwenang.</div>
+  <button id="releaseDemoBtn" class="r-demo" type="button" hidden>Buka simulasi formulir lama (lokal, tidak tersinkron)</button>
+ </div>
+</div>
+<div id="sentarumLegacyWarning" hidden>MODE SIMULASI LOKAL — JANGAN MASUKKAN DATA RESMI. DATA DI BROWSER TIDAK TERSINKRON KE SUPABASE.</div>
+<script>
+(()=>{'use strict';
+ const cfg=window.SENTARUM_RELEASE_CONFIG;
+ const gate=document.getElementById('sentarumReleaseGate');
+ const flag=document.getElementById('releaseFlag');
+ const text=document.getElementById('releaseText');
+ const note=document.getElementById('releaseNotice');
+ const demo=document.getElementById('releaseDemoBtn');
+ const warning=document.getElementById('sentarumLegacyWarning');
+ const ready=!!(cfg?.url && /^https:\/\/[a-z0-9-]+\.supabase\.co$/.test(cfg.url) && cfg.publishableKey?.startsWith('sb_publishable_'));
+ flag.textContent=cfg?.environment==='production'?'PRODUCTION TEMPLATE · TERKUNCI SAMPAI DIVERIFIKASI':'STAGING RC 0.28 · DATA SIMULASI SAJA';
+ if(cfg?.environment==='production'){
+    if(!ready){text.textContent='Konfigurasi produksi belum tersedia. Tidak ada koneksi ke staging yang disisipkan ke template produksi.';
+      note.textContent='NO-GO: Proyek Supabase produksi, schema/RLS, backup–restore dan pengujian pengguna wajib lulus sebelum konfigurasi produksi diaktifkan.';}
+    else {text.textContent='Server produksi dikonfigurasi, tetapi tetap lakukan verifikasi keamanan dan persetujuan operasional sebelum menginput data resmi.';}
+ }
+ document.querySelectorAll('[data-release-open]').forEach(b=>{
+  b.disabled=!ready;
+  b.addEventListener('click',()=>{gate.hidden=true;
+   const n=b.getAttribute('data-release-open');
+   const act={'s12':window.s12Open,'s13':window.s13Open,'s14':window.s14Open,'s15':window.s15Open}[n];
+   if(typeof act==='function')act(); else {gate.hidden=false;note.textContent='Panel server tidak ditemukan. Jangan melanjutkan input.';}
+  });
+ });
+ if(cfg?.enableLegacyDemo && cfg.environment!=='production'){
+  demo.hidden=false;
+  demo.addEventListener('click',()=>{
+   if(!confirm('Buka prototipe lokal? Isian di sini TIDAK masuk Supabase. Gunakan hanya untuk simulasi.'))return;
+   gate.hidden=true;warning.hidden=false;});
+ }
+ const ids=['s12Layer','s13Layer','s14Layer','s15Layer'];
+ // Jika dialog ditutup, kembalikan pengguna ke jalur kerja server, bukan ke formulir lokal.
+ const obs=new MutationObserver(()=>{
+   if(!warning.hidden)return;
+   if(ids.every(id=>{const e=document.getElementById(id);return !e||e.hidden;}))gate.hidden=false;
+ });
+ ids.forEach(id=>{const e=document.getElementById(id);if(e)obs.observe(e,{attributes:true,attributeFilter:['hidden']});});
 })();
 </script>
 </body></html>
