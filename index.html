@@ -4044,7 +4044,7 @@ window.s14Open=async()=>{$('s14Layer').hidden=false;if(!token()){window.s12Open?
 </style>
 <div id="s15Layer" hidden role="dialog" aria-modal="true" aria-label="Pusat Kerja Supabase SENTARUM">
 <div id="s15Root">
-<header><div><h2>☁ Pusat Kerja SENTARUM</h2><div style="font-size:12px;color:#d2f3e8">KANDIDAT TERPADU · STAGING 015/016 · Belum produksi</div></div><button class="dismiss" id="s15Close" type="button">Tutup</button></header>
+<header><div><h2>☁ Pusat Kerja SENTARUM</h2><div style="font-size:12px;color:#d2f3e8">KANDIDAT TERPADU · STAGING 019 · Perbaikan Evidence · Belum produksi</div></div><button class="dismiss" id="s15Close" type="button">Tutup</button></header>
 <div class="body">
 <div id="s15Status" class="notice" role="status" aria-live="polite">Login Administrator melalui ☁ Renstra Supabase dahulu.</div>
 <div class="notice"><strong>Sumber data jelas:</strong> Pusat Kerja, ☁ Data Server, dan ☁ Perjalanan Server membaca/menulis ke Supabase Staging. <strong>Formulir prototipe lama di belakangnya masih lokal.</strong> Jangan memasukkan data resmi sebelum migrasi dan pengujian produksi disahkan.</div>
@@ -4064,6 +4064,12 @@ window.s14Open=async()=>{$('s14Layer').hidden=false;if(!token()){window.s12Open?
   <p class="muted">Unggah tidak berarti bukti sudah diverifikasi atau SPJ sudah dibayar. Tidak ada izin hapus permanen.</p>
  </div>
  <div class="s15-card"><h3 style="margin-top:0">Arsip evidence dari server</h3><div id="s15Assets">Belum dimuat.</div></div>
+<div class="s15-card" id="s19RecoveryPanel"><h3 style="margin-top:0">Pemulihan evidence yang belum tertaut</h3>
+<p class="muted">Sistem mencari file yang sudah berada di Storage privat tetapi belum tercatat di metadata. File lama dibaca secara privat untuk menghitung SHA-256 yang sebenarnya, tanpa unggah ulang, penghapusan, atau membuat register baru.</p>
+<div class="actions"><button class="primary" id="s19Recover" type="button">Periksa &amp; pulihkan evidence</button></div>
+<div id="s19RecoveryStatus" class="notice" role="status" aria-live="polite">SQL 019 harus berhasil dijalankan terlebih dahulu. Akses hanya untuk Admin di staging.</div>
+<div id="s19RecoveryList"></div>
+<p class="muted">Nama asli file yang tidak tersimpan pada register tidak dapat ditebak. Metadata hasil pemulihan diberi nama arsip teknis dan klasifikasi Terbatas. Bukti tidak otomatis disahkan atau dikaitkan ke SPJ.</p></div>
  </div>
 </section>
 <section id="s15TabRenstra" hidden>
@@ -4140,7 +4146,58 @@ async function upload(){if(busy)return;if(!org)return tell('Muat data server dah
   const tripId=$('s15TripForEv').value;
   if(tripId){await rpc('sentarum_modelb_command',{p_org_id:org.id,p_command:'evidence_link',p_data:{travel_id:tripId,scope:$('s15EvScope').value,spj_id:$('s15EvScope').value==='SPJ'?$('s15SpjForEv').value:null,document_record_id:id,evidence_kind:kind}});}
   $('s15Title').value='';$('s15File').value='';await load();tell('Berhasil: dokumen privat diunggah dan didaftarkan'+(tripId?' serta ditautkan ke perjalanan.':'.')+' Bukti belum terverifikasi.','good');
- }catch(e){let note=created?' Metadata dokumen sudah terbentuk di server.':'';if(fileDone)note+=' File mungkin tersimpan tanpa tautan; catat untuk rekonsiliasi Admin.';tell('Tahap unggah gagal: '+txt(e.message)+note,'bad');}finally{busy=false;$('s15Upload').disabled=false;}}
+ }catch(e){let note=created?' Register dokumen sudah terbentuk di server.':'';if(fileDone)note+=' File tersimpan tetapi metadata belum tertaut; gunakan tombol Pemulihan evidence setelah perbaikan SQL.';tell('Tahap unggah gagal: '+txt(e.message)+note,'bad');}finally{busy=false;$('s15Upload').disabled=false;}}
+// Pemulihan evidence lama: baca file melalui Storage authenticated, checksum dari byte sebenarnya,
+// catat metadata via RPC yang sudah diamankan. Tidak membuat file baru dan tidak menghapus apa pun.
+async function recoverOrphans(){
+ if(busy)return;
+ if(!org)return tell('Muat data server dahulu.','bad');
+ const button=$('s19Recover'),status=$('s19RecoveryStatus'),list=$('s19RecoveryList');
+ const info=m=>{status.textContent=m;};
+ busy=true;button.disabled=true;list.replaceChildren();
+ try{
+  info('Memeriksa file tanpa metadata di bucket privat…');
+  const rows=await rpc('sentarum_evidence_recovery_candidates',{p_org_id:org.id});
+  if(!Array.isArray(rows))throw Error('Daftar rekonsiliasi tidak valid');
+  if(!rows.length){info('Tidak ada file yang perlu dipulihkan.');tell('Semua file yang dapat diakses sudah memiliki metadata.','good');return;}
+  for(const row of rows)list.append(div('item',(row.document_title||'Dokumen')+' · '+(Number(row.file_size)/1024).toFixed(1)+' KB'));
+  info(`Ditemukan ${rows.length} file yang cocok. Tidak ada unggah ulang.`);
+  if(!window.confirm(`Pulihkan metadata untuk ${rows.length} file privat yang sudah ada? Sistem akan menghitung SHA-256 dari file asli tanpa unggah ulang. Tidak akan menghapus data.`)){
+   info('Pemeriksaan selesai. Pemulihan belum dijalankan.');return;
+  }
+  if(!crypto?.subtle)throw Error('Browser harus mendukung SHA-256 (HTTPS).');
+  const jwt=token();if(!jwt)throw Error('Sesi Admin berakhir. Masuk kembali.');
+  let ok=0;const failed=[];
+  for(const row of rows){
+   try{
+    info(`Memulihkan file ${ok+failed.length+1} dari ${rows.length}…`);
+    const filenameSegment=row.storage_path.split('/').pop()||'';
+    if(!/^[0-9a-f-]{36}\.(pdf|png|jpg|jpeg|webp)$/.test(filenameSegment))throw Error('Nama file tidak sesuai aturan');
+    // Ambil berkas PRIVAT menggunakan token sesi. Byte file tidak disimpan di localStorage.
+    const uri=ROOT+'/storage/v1/object/authenticated/'+encodeURIComponent(BUCKET)+'/'+pathEncode(row.storage_path);
+    const response=await fetch(uri,{headers:{apikey:KEY,Authorization:'Bearer '+jwt},credentials:'omit',cache:'no-store'});
+    if(!response.ok)throw Error('Gagal membaca file privat HTTP '+response.status);
+    const bytes=await response.arrayBuffer();
+    if(bytes.byteLength!==Number(row.file_size)||bytes.byteLength<1||bytes.byteLength>10485760)
+      throw Error('Ukuran byte berbeda dari metadata Storage');
+    const raw=await crypto.subtle.digest('SHA-256',bytes);
+    const sha=[...new Uint8Array(raw)].map(b=>b.toString(16).padStart(2,'0')).join('');
+    const safeName='arsip-pemulihan-'+filenameSegment;
+    await rpc('sentarum_attach_private_file',{
+      p_org_id:org.id,p_document_record_id:row.document_record_id,
+      p_path:row.storage_path,p_filename:safeName,p_classification:'restricted',p_sha256:sha
+    });
+    ok++;
+    list.append(div('item','✓ Metadata dipulihkan: '+(row.document_title||row.document_record_id)));
+   }catch(e){failed.push((row.document_title||'Dokumen')+': '+String(e?.message||e));}
+  }
+  try{await load();}catch(e){/* kegagalan refresh tidak membatalkan metadata yang telah dicatat */}
+  info(`Hasil: ${ok} berhasil, ${failed.length} belum berhasil. ${failed.length?'Periksa rincian dan lanjutkan hanya jika perlu.':'Selesai. Muat ulang untuk melihat berkas.'}`);
+  for(const e of failed)list.append(div('item','Perlu pemeriksaan: '+e));
+  tell(failed.length?`Pemulihan sebagian: ${ok} berhasil, ${failed.length} gagal.`:`Pemulihan ${ok} file selesai. Bukti belum diverifikasi.` ,failed.length?'bad':'good');
+ }catch(e){info('Pemulihan belum dapat dilanjutkan: '+String(e?.message||e));tell('Gagal memeriksa evidence: '+String(e?.message||e),'bad');}
+ finally{busy=false;button.disabled=false;}
+}
 function renderTargets(){const year=Number($('s15Year').value);const data=targets.filter(x=>Number(x.year)===year),host=$('s15Targets');host.replaceChildren();if(!data.length)host.append(div('muted','Tidak ada target tahun ini.'));
  for(const t of data){const i=indicators.find(x=>x.id===t.indicator_id),label=i?.name||t.indicator_id,c=div('item','');const title=document.createElement('strong');title.textContent=label;c.append(title);const state=txt(t.actual_status).replaceAll('_',' ');
  c.append(div('muted',`Target ${Number(t.target_numeric).toLocaleString('id-ID')} ${i?.unit||''} · ${t.actual_numeric===null?'Realisasi belum dicatat':'Usulan/aktual '+Number(t.actual_numeric).toLocaleString('id-ID')} · ${state}`));host.append(c);}
@@ -4154,7 +4211,7 @@ function tab(v){for(const b of document.querySelectorAll('[data-s15tab]'))b.clas
 window.s15Open=async()=>{if(!token()){$('s15Layer').hidden=true;window.s12Open?.();tell('Login Admin melalui ☁ Renstra Supabase dahulu.');return;}$('s15Layer').hidden=false;await load();};
 $('s15Close').onclick=()=>$('s15Layer').hidden=true;$('s15Layer').addEventListener('click',e=>{if(e.target===$('s15Layer'))$('s15Layer').hidden=true;});document.querySelectorAll('[data-s15tab]').forEach(b=>b.onclick=()=>tab(b.dataset.s15tab));
 $('s15Refresh').onclick=load;$('s15Generic').onclick=()=>{ $('s15Layer').hidden=true;window.s13Open?.();};$('s15Travel').onclick=()=>{$('s15Layer').hidden=true;window.s14Open?.();};
-$('s15TripForEv').onchange=updateSpjOptions;$('s15Year').onchange=renderTargets;$('s15Upload').onclick=upload;$('s15SubmitActual').onclick=proposeActual;$('s15Link').onclick=contribution;$('s15Check').onclick=readiness;
+$('s15TripForEv').onchange=updateSpjOptions;$('s15Year').onchange=renderTargets;$('s15Upload').onclick=upload;$('s19Recover').onclick=recoverOrphans;$('s15SubmitActual').onclick=proposeActual;$('s15Link').onclick=contribution;$('s15Check').onclick=readiness;
 })();
 </script>
 
